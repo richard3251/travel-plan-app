@@ -1,0 +1,21 @@
+# ===== 운영체제 쓰레기 =====
+.DS_Store
+Thumbs.db
+
+# ===== IntelliJ & 프로젝트 설정 =====
+.idea/
+*.iml
+backend/.idea/
+
+# ===== 빌드 관련 =====
+backend/build/
+backend/out/
+backend/.gradle/
+
+# ===== 민감 설정 =====
+backend/src/main/resources/application.yml
+.env
+
+# ===== 기타 =====
+logs/
+*.log
