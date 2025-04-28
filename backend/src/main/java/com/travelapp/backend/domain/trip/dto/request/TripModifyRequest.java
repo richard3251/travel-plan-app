@@ -1,0 +1,13 @@
+package com.travelapp.backend.domain.trip.dto.request;
+
+import java.time.LocalDate;
+import lombok.Getter;
+
+@Getter
+public class TripModifyRequest {
+
+    private String title;
+    private LocalDate startDate;
+    private LocalDate endDate;
+
+}
