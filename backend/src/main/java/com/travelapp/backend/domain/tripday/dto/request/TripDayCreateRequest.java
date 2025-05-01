@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public class TripDayCreateRequest {
 
+    private Integer day;
     private LocalDate date;
 
 }

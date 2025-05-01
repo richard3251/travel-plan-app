@@ -19,7 +19,7 @@ public class TripDayService {
     private final TripRepository tripRepository;
 
     @Transactional
-    public TripDayResponse createTripDay(Long tripId, TripDayCreateRequest request, Integer dayNumber) {
+    public TripDayResponse createTripDay(Long tripId, TripDayCreateRequest request) {
 
         Trip trip = tripRepository.findById(tripId).orElseThrow(
             () -> new IllegalArgumentException("해당 여행일정이 없습니다.")
@@ -27,7 +27,7 @@ public class TripDayService {
 
         TripDay tripDay = TripDay.builder()
             .trip(trip)
-            .day(dayNumber)
+            .day(request.getDay())
             .date(request.getDate())
             .build();
 
@@ -37,7 +37,11 @@ public class TripDayService {
     @Transactional
     public List<TripDayResponse> getTripDays(Long tripId) {
 
-        return tripDayRepository.findByTrip_id(tripId).stream()
+        Trip trip = tripRepository.findById(tripId).orElseThrow(
+            () -> new IllegalArgumentException("해당 여행일정이 없습니다.")
+        );
+
+        return tripDayRepository.findByTrip(trip).stream()
             .map(TripDayResponse :: of)
             .toList();
     }

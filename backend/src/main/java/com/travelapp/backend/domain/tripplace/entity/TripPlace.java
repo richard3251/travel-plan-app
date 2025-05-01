@@ -30,7 +30,7 @@ public class TripPlace {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trip_id", nullable = false)
+    @JoinColumn(name = "trip_day_id", nullable = false)
     private TripDay tripDay;
 
     @Column(nullable = false)
