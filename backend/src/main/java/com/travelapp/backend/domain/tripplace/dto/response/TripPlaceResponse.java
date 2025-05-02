@@ -10,12 +10,12 @@ import lombok.Builder;
 public class TripPlaceResponse {
 
     private Long id;
+    private String placeId;
     private String placeName;
     private String address;
     private Double latitude;
     private Double longitude;
     private String memo;
-    private String placeId;
     private LocalTime visitTime;
     private Integer visitOrder;
 
@@ -25,12 +25,12 @@ public class TripPlaceResponse {
         
         return TripPlaceResponse.builder()
             .id(tripPlace.getId())
+            .placeId(tripPlace.getPlaceId())
             .placeName(tripPlace.getPlaceName())
             .address(tripPlace.getAddress())
             .latitude(tripPlace.getLatitude())
             .longitude(tripPlace.getLongitude())
             .memo(tripPlace.getMemo())
-            .placeId(tripPlace.getPlaceId())
             .visitTime(tripPlace.getVisitTime())
             .visitOrder(tripPlace.getVisitOrder())
             .build();

@@ -33,6 +33,8 @@ public class TripPlace {
     @JoinColumn(name = "trip_day_id", nullable = false)
     private TripDay tripDay;
 
+    private String placeId;
+
     @Column(nullable = false)
     private String placeName;
 
@@ -46,8 +48,6 @@ public class TripPlace {
     private Double longitude;
 
     private String memo;
-
-    private String placeId;
 
     @Column(nullable = false)
     private LocalTime visitTime;
