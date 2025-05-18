@@ -46,6 +46,15 @@ public class TripDayService {
             .toList();
     }
 
+    @Transactional
+    public void deleteTripDay(Long dayId) {
+        TripDay tripDay = tripDayRepository.findById(dayId).orElseThrow(
+            () -> new IllegalArgumentException("해당 여행 날짜가 존재하지 않습니다.")
+        );
+
+        tripDayRepository.delete(tripDay);
+    }
+
 
 
 

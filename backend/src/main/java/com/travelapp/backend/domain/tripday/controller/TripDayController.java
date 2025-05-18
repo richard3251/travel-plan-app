@@ -6,6 +6,7 @@ import com.travelapp.backend.domain.tripday.service.TripDayService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,17 @@ public class TripDayController {
         List<TripDayResponse> tripDays = tripDayService.getTripDays(tripId);
 
         return ResponseEntity.ok(tripDays);
+    }
+
+    @DeleteMapping("/{dayId}")
+    public ResponseEntity<Void> deleteTripDay(
+        @PathVariable Long tripId,
+        @PathVariable Long dayId
+    ) {
+
+        tripDayService.deleteTripDay(dayId);
+
+        return ResponseEntity.ok().build();
     }
 
 
