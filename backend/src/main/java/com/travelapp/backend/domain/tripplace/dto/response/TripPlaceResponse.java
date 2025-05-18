@@ -4,9 +4,11 @@ import com.travelapp.backend.domain.tripplace.entity.TripPlace;
 import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
 @AllArgsConstructor
+@Getter
 public class TripPlaceResponse {
 
     private Long id;

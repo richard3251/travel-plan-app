@@ -4,11 +4,13 @@ import com.travelapp.backend.domain.member.entity.Member;
 import com.travelapp.backend.domain.member.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class MemberResponse {
 
     private Long id;

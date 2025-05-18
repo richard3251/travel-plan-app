@@ -1,0 +1,96 @@
+.day-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.day-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.day-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.day-actions button {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.map-search-button {
+  background-color: #4285f4;
+  color: white;
+}
+
+.map-search-button:hover {
+  background-color: #3367d6;
+}
+
+.search-place-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.search-place-button:hover {
+  background-color: #2980b9;
+}
+
+.add-place-button {
+  background-color: #27ae60;
+  color: white;
+}
+
+.add-place-button:hover {
+  background-color: #219653;
+}
+
+.delete-day-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-day-button:hover {
+  background-color: #c0392b;
+}
+
+.day-places {
+  padding: 1.5rem;
+}
+
+.places-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.loading-places {
+  text-align: center;
+  padding: 1rem 0;
+  color: #666;
+}
+
+.no-places {
+  text-align: center;
+  padding: 1.5rem 0;
+  color: #666;
+  font-style: italic;
+} 

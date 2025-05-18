@@ -1,0 +1,224 @@
+.place-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s;
+}
+
+.place-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.place-item:last-child {
+  margin-bottom: 0;
+}
+
+.place-order {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 1rem;
+  min-width: 30px;
+}
+
+.order-number {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.move-up, .move-down {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f1f1;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 0.9rem;
+}
+
+.move-up:hover, .move-down:hover {
+  background-color: #e0e0e0;
+}
+
+.move-up:disabled, .move-down:disabled {
+  background-color: #f9f9f9;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.place-time {
+  background-color: #f1f8ff;
+  color: #3498db;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-weight: 500;
+  margin-right: 1rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+.place-info {
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.place-name {
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 0.3rem;
+}
+
+.place-address {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.place-memo {
+  background-color: #fffde7;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #555;
+  border-left: 3px solid #ffc107;
+}
+
+.place-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit-place, .delete-place {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.edit-place {
+  background-color: #3498db;
+  color: white;
+}
+
+.edit-place:hover {
+  background-color: #2980b9;
+}
+
+.delete-place {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-place:hover {
+  background-color: #c0392b;
+}
+
+.edit-place-form {
+  width: 100%;
+}
+
+.edit-place-form .form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.edit-place-form .form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.edit-place-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.edit-place-form label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.edit-place-form input,
+.edit-place-form textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.edit-place-form input:focus,
+.edit-place-form textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.cancel-button, .save-button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cancel-button {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.save-button {
+  background-color: #27ae60;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #219653;
+} 

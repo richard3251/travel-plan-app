@@ -19,3 +19,6 @@ backend/src/main/resources/application.yml
 # ===== 기타 =====
 logs/
 *.log
+
+# Node 모듈 전체 무시
+/frontend/node_modules/

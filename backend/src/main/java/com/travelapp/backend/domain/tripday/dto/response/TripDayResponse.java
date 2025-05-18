@@ -3,8 +3,10 @@ package com.travelapp.backend.domain.tripday.dto.response;
 import com.travelapp.backend.domain.tripday.entity.TripDay;
 import java.time.LocalDate;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
+@Getter
 public class TripDayResponse {
 
     private Long id;
