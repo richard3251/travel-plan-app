@@ -17,12 +17,21 @@ public class TripResponse {
 
     private LocalDate endDate;
 
+    private String region;
+
+    private Double regionLat;
+
+    private Double regionLng;
+
     public static TripResponse of(Trip trip) {
         return TripResponse.builder()
             .id(trip.getId())
             .title(trip.getTitle())
             .startDate(trip.getStartDate())
             .endDate(trip.getEndDate())
+            .region(trip.getRegion())
+            .regionLat(trip.getRegionLat())
+            .regionLng(trip.getRegionLng())
             .build();
     }
 

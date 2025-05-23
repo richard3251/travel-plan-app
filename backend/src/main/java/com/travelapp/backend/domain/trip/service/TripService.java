@@ -31,6 +31,9 @@ public class TripService {
             .title(request.getTitle())
             .startDate(request.getStartDate())
             .endDate(request.getEndDate())
+            .region(request.getRegion())
+            .regionLat(request.getRegionLat())
+            .regionLng(request.getRegionLng())
             .build();
 
         tripRepository.save(trip);

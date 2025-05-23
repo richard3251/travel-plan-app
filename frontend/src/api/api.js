@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+// 환경 변수에서 API URL을 가져오거나 기본값 사용
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
 
 // Axios 인스턴스 생성
 const api = axios.create({
@@ -9,6 +10,31 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// 요청 인터셉터 추가 - 디버깅용
+api.interceptors.request.use(
+  config => {
+    console.log('API 요청:', config.method.toUpperCase(), config.url, config.data);
+    return config;
+  },
+  error => {
+    console.error('API 요청 오류:', error);
+    return Promise.reject(error);
+  }
+);
+
+// 응답 인터셉터 추가 - 디버깅용
+api.interceptors.response.use(
+  response => {
+    console.log('API 응답:', response.status, response.data);
+    return response;
+  },
+  error => {
+    console.error('API 응답 오류:', error.response ? error.response.status : 'No response', 
+                 error.response ? error.response.data : error.message);
+    return Promise.reject(error);
+  }
+);
 
 // 여행 관련 API
 const tripApi = {

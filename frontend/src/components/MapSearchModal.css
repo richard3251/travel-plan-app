@@ -170,4 +170,101 @@
 
 .search-error {
   color: #d93025;
+}
+
+/* 장소 정보 입력 폼 스타일 */
+.place-form-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.selected-place-info {
+  padding: 16px;
+  border-bottom: 1px solid #eaeaea;
+  background-color: #f8f9fa;
+}
+
+.selected-place-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.selected-place-info p {
+  margin: 4px 0;
+  color: #555;
+}
+
+.selected-place-info .category {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 4px;
+}
+
+.place-form {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  gap: 12px;
+}
+
+.cancel-button {
+  padding: 10px 16px;
+  background-color: #f1f3f4;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.confirm-button {
+  padding: 10px 24px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancel-button:hover {
+  background-color: #e3e6e8;
+}
+
+.confirm-button:hover {
+  background-color: #3367d6;
 } 

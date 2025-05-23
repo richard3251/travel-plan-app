@@ -65,6 +65,42 @@ public class TripPlaceService {
     public TripPlaceResponse updateVisitOrder(Long placeId, VisitOrderUpdateRequest request) {
 
         TripPlace tripPlace = existsTripPlace(placeId);
+        Integer oldOrder = tripPlace.getVisitOrder();
+        Integer newOrder = request.getVisitOrder();
+
+        // 순서가 변경되지 않았으면 그대로 반환
+        if (oldOrder.equals(newOrder)) {
+            return TripPlaceResponse.of(tripPlace);
+        }
+
+        // 같은 날짜에 속한 다른 장소들의 순서도 함께 조정
+        List<TripPlace> placesInSameDay = tripPlaceRepository.findByTripDay_Id(tripPlace.getTripDay().getId());
+
+        if (oldOrder < newOrder) {
+            // 아래로 이동: 기존 위치와 새 위치 사이의 항목들은 한 칸씩 위로
+            for (TripPlace place : placesInSameDay) {
+                if (place.getId().equals(placeId)) continue;
+
+                Integer currentOrder = place.getVisitOrder();
+                if (currentOrder > oldOrder && currentOrder <= newOrder) {
+                    place.visitOrderUpdate(new VisitOrderUpdateRequest(currentOrder - 1));
+                    tripPlaceRepository.save(place);
+                }
+            }
+        } else {
+            // 위로 이동: 새 위치와 기존 위치 사이의 항목들은 한칸씩 아래로
+            for (TripPlace place : placesInSameDay) {
+                if (place.getId().equals(placeId)) continue;
+
+                Integer currentOrder = place.getVisitOrder();
+                if (currentOrder >= newOrder && currentOrder < oldOrder) {
+                    place.visitOrderUpdate(new VisitOrderUpdateRequest(currentOrder + 1));
+                    tripPlaceRepository.save(place);
+                }
+
+            }
+
+        }
 
         tripPlace.visitOrderUpdate(request);
         tripPlaceRepository.save(tripPlace);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './TripPlaceItem.css';
 
-const TripPlaceItem = ({ place, onUpdatePlace, onUpdateOrder, onDeletePlace, totalPlaces }) => {
+const TripPlaceItem = ({ place, onUpdatePlace, onDeletePlace }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     placeName: place.placeName,
@@ -28,18 +28,6 @@ const TripPlaceItem = ({ place, onUpdatePlace, onUpdateOrder, onDeletePlace, tot
     setIsEditing(false);
   };
   
-  const moveUp = () => {
-    if (place.visitOrder > 1) {
-      onUpdateOrder(place.id, place.visitOrder - 1);
-    }
-  };
-  
-  const moveDown = () => {
-    if (place.visitOrder < totalPlaces) {
-      onUpdateOrder(place.id, place.visitOrder + 1);
-    }
-  };
-  
   React.useEffect(() => {
     setEditData({
       placeName: place.placeName,
@@ -54,7 +42,7 @@ const TripPlaceItem = ({ place, onUpdatePlace, onUpdateOrder, onDeletePlace, tot
   }, [place]);
   
   return (
-    <li className="place-item">
+    <div className="place-item-simple">
       {isEditing ? (
         <form className="edit-place-form" onSubmit={handleSubmit}>
           <div className="form-row">
@@ -116,29 +104,7 @@ const TripPlaceItem = ({ place, onUpdatePlace, onUpdateOrder, onDeletePlace, tot
           </div>
         </form>
       ) : (
-        <>
-          <div className="place-order">
-            <span className="order-number">{place.visitOrder}</span>
-            <div className="order-controls">
-              <button 
-                className="move-up" 
-                onClick={moveUp}
-                disabled={place.visitOrder <= 1}
-                title="위로 이동"
-              >
-                ↑
-              </button>
-              <button 
-                className="move-down" 
-                onClick={moveDown}
-                disabled={place.visitOrder >= totalPlaces}
-                title="아래로 이동"
-              >
-                ↓
-              </button>
-            </div>
-          </div>
-          
+        <div className="place-display">
           <div className="place-time">
             {place.visitTime.substring(0, 5)}
           </div>
@@ -165,9 +131,9 @@ const TripPlaceItem = ({ place, onUpdatePlace, onUpdateOrder, onDeletePlace, tot
               삭제
             </button>
           </div>
-        </>
+        </div>
       )}
-    </li>
+    </div>
   );
 };
 

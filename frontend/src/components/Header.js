@@ -5,20 +5,18 @@ import './Header.css';
 const Header = () => {
   return (
     <header className="header">
-      <div className="header-container">
-        <Link to="/" className="logo">
-          여행 계획 앱
+      <Link to="/" className="logo">
+        planscanner
+      </Link>
+      
+      <div className="nav-links">
+        <Link to="/">내 여행 목록</Link>
+      </div>
+      
+      <div className="user-actions">
+        <Link to="/trips/new">
+          <button>새 여행 만들기</button>
         </Link>
-        <nav className="nav">
-          <ul>
-            <li>
-              <Link to="/">내 여행</Link>
-            </li>
-            <li>
-              <Link to="/trips/new">새 여행 만들기</Link>
-            </li>
-          </ul>
-        </nav>
       </div>
     </header>
   );

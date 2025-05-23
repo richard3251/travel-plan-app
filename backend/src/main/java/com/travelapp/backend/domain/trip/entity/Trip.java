@@ -46,6 +46,12 @@ public class Trip {
     @Column(nullable = false)
     private LocalDate endDate;
 
+    private String region;
+
+    private Double regionLat;
+
+    private Double regionLng;
+
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TripDay> tripDays = new ArrayList<>();
 
@@ -53,6 +59,9 @@ public class Trip {
         this.title = request.getTitle();
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
+        this.region = request.getRegion();
+        this.regionLat = request.getRegionLat();
+        this.regionLng = request.getRegionLng();
     }
 
 }

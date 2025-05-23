@@ -9,17 +9,29 @@ body {
   background-color: #f5f7fa;
   color: #333;
   line-height: 1.6;
+  height: 100vh;
+  overflow: hidden;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
 }
 
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .main-content {
   flex-grow: 1;
-  padding-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 0;
+  height: 100%;
 }
 
 a {
@@ -49,4 +61,67 @@ button {
   color: #e74c3c;
   text-align: center;
   padding: 0 1rem;
+}
+
+/* MYRO 스타일 헤더 */
+.header {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 0.8rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  height: 60px;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #3498db;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  color: #555;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: #3498db;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.user-actions button:hover {
+  background-color: #2980b9;
+}
+
+/* MYRO 스타일 전체 컨테이너 */
+.myro-style-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 60px); /* 헤더 높이를 제외한 높이 */
+  overflow: hidden;
 } 

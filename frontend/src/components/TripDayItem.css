@@ -74,6 +74,7 @@
 
 .day-places {
   padding: 1.5rem;
+  min-height: 100px;
 }
 
 .places-list {
@@ -93,4 +94,409 @@
   padding: 1.5rem 0;
   color: #666;
   font-style: italic;
+}
+
+.drag-instruction {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-style: italic;
+}
+
+.places-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 장소 카드 스타일 */
+.place-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: grab;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.place-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #3498db;
+  transform: translateY(-1px);
+}
+
+.place-card:active {
+  cursor: grabbing;
+}
+
+.place-card.dragging {
+  background: #fff3cd;
+  border-color: #ffc107;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transform: rotate(2deg) scale(1.02);
+  z-index: 1000;
+}
+
+.place-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.place-number {
+  background: #3498db;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.place-time {
+  color: #666;
+  font-weight: 500;
+  font-size: 14px;
+  background: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.place-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-place-button, .delete-place-button {
+  background: none;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.edit-place-button {
+  color: #3498db;
+  border-color: #3498db;
+}
+
+.edit-place-button:hover {
+  background-color: #3498db;
+  color: white;
+}
+
+.delete-place-button {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.delete-place-button:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.place-info {
+  margin-left: 8px;
+}
+
+.place-name {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.place-address {
+  color: #7f8c8d;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.place-memo {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #495057;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.place-edit-form {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.edit-field {
+  margin-bottom: 12px;
+}
+
+.edit-field label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #495057;
+  font-size: 14px;
+}
+
+.time-input {
+  width: 100%;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.time-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.memo-textarea {
+  width: 100%;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.memo-textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.save-button {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.save-button:hover {
+  background: #219a52;
+}
+
+.cancel-button {
+  background: #95a5a6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-button:hover {
+  background: #7f8c8d;
+}
+
+/* 드래그 앤 드롭 관련 스타일 */
+.draggable-place-item {
+  margin-bottom: 8px;
+  cursor: grab;
+  transition: all 0.2s ease;
+  position: relative;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.draggable-place-item:hover {
+  cursor: grab;
+}
+
+.draggable-place-item:active {
+  cursor: grabbing;
+}
+
+/* 드래그 중일 때 부드러운 애니메이션 */
+.draggable-place-item.dragging {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+/* 드래그 중인 항목 스타일 */
+.places-list [data-rbd-drag-handle-draggable-id][data-rbd-drag-handle-context-id][aria-pressed="true"] {
+  background-color: #e3f2fd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0.9;
+  border-radius: 8px;
+  transform: rotate(2deg);
+}
+
+/* 드래그 타겟 위치 표시 */
+.places-list [data-rbd-droppable-id][data-rbd-droppable-context-id] [data-rbd-placeholder-context-id] {
+  background-color: #e0f7fa;
+  border: 2px dashed #26c6da;
+  border-radius: 8px;
+  margin: 8px 0;
+  min-height: 60px;
+}
+
+/* 순서 변경 버튼 스타일 */
+.place-list-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.place-order-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 12px;
+  min-width: 40px;
+}
+
+.place-order {
+  margin: 4px 0;
+  font-weight: bold;
+  color: #555;
+}
+
+.order-button {
+  padding: 4px 8px;
+  margin: 2px 0;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.order-button:hover {
+  background-color: #e0e0e0;
+  border-color: #ccc;
+}
+
+.order-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 장소 카드 호버 효과 강화 */
+.trip-place-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.drag-hint {
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  margin: 10px 0;
+  opacity: 0.7;
+}
+
+.draggable-place-item::before {
+  content: "⋮⋮";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ccc;
+  font-size: 16px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.draggable-place-item:hover::before {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .draggable-place-item::before {
+    opacity: 1;
+  }
+  
+  .drag-hint {
+    font-size: 11px;
+    margin: 8px 0;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.drag-handle {
+  cursor: grab;
+  color: #999;
+  font-size: 16px;
+  padding: 4px;
+}
+
+.drag-handle:hover {
+  color: #666;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-guide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(52, 152, 219, 0.1) 70%);
+  animation: dragGlow 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes dragGlow {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.dragging-item {
+  animation: pulse 0.5s ease-in-out;
 } 

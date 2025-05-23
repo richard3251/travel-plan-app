@@ -18,6 +18,25 @@
   margin-bottom: 0;
 }
 
+.place-item-simple {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.place-item-simple:hover {
+  background-color: #f8f9fa;
+}
+
+.place-display {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
 .place-order {
   display: flex;
   flex-direction: column;
@@ -114,6 +133,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  position: relative;
+  z-index: 10;
 }
 
 .edit-place, .delete-place {
@@ -124,6 +145,8 @@
   cursor: pointer;
   transition: background-color 0.3s;
   white-space: nowrap;
+  position: relative;
+  z-index: 10;
 }
 
 .edit-place {

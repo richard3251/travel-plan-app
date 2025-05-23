@@ -1,51 +1,84 @@
+/* 여행 상세 페이지 스타일 */
 .trip-detail-container {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  width: 100%;
+  height: 100vh;
+  max-height: calc(100vh - 60px); /* 헤더 높이를 고려해 조정 */
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9;
+}
+
+.api-error-banner {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ffeeba;
+  font-size: 0.9rem;
 }
 
 .trip-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  padding: 1rem 2rem;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
 .trip-header h2 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: #333;
   margin: 0;
   padding: 0;
-  border: none;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.trip-brand {
+  display: flex;
+  align-items: center;
+}
+
+.brand-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #3498db;
+}
+
+.trip-date-range {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: normal;
 }
 
 .trip-actions {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .edit-button, .delete-button {
-  padding: 0.6rem 1.2rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 4px;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
-  text-decoration: none;
+  transition: background-color 0.2s;
 }
 
 .edit-button {
   background-color: #27ae60;
   color: white;
-  display: inline-flex;
-  align-items: center;
+  border: none;
+  text-decoration: none;
 }
 
 .delete-button {
   background-color: #e74c3c;
   color: white;
   border: none;
-  font-family: inherit;
 }
 
 .edit-button:hover {
@@ -56,286 +89,329 @@
   background-color: #c0392b;
 }
 
-.trip-info-card {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.trip-dates {
+/* 메인 컨텐츠 레이아웃 */
+.trip-content {
   display: flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex: 1;
+  overflow: hidden;
 }
 
-.date-item {
+/* 좌측 사이드바 */
+.trip-sidebar {
+  width: 380px;
+  height: 100%;
+  background-color: #fff;
+  border-right: 1px solid #eee;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-.date-label {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 0.3rem;
-}
-
-.date-value {
-  font-size: 1.1rem;
-  color: #333;
-  font-weight: 500;
-}
-
-.date-separator {
-  font-size: 1.5rem;
-  color: #666;
-  margin: 0 0.5rem;
-  align-self: center;
-}
-
-.trip-duration {
-  margin-left: auto;
-  background-color: #f1f8ff;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  color: #3498db;
-  font-weight: 500;
-}
-
-.trip-description h3 {
-  font-size: 1.3rem;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.trip-description p {
-  line-height: 1.6;
-  color: #555;
-}
-
-.trip-days-section {
-  margin-bottom: 2rem;
-}
-
-.section-header {
+.trip-day-tabs {
   display: flex;
-  justify-content: space-between;
+  overflow-x: auto;
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #eee;
+}
+
+.trip-day-tab {
+  padding: 0.6rem 1rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  white-space: nowrap;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
+  min-width: 70px;
+  font-family: inherit;
 }
 
-.section-header h3 {
-  font-size: 1.5rem;
+.trip-day-tab.active {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.day-number {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.day-date {
+  font-size: 0.7rem;
+  margin-top: 0.2rem;
+}
+
+.add-day-tab {
+  padding: 0.6rem 1rem;
+  background: #f1f1f1;
+  border: 1px dashed #aaa;
+  border-radius: 4px;
+  white-space: nowrap;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-family: inherit;
+  color: #666;
+}
+
+.add-day-tab:hover {
+  background-color: #e9e9e9;
+}
+
+.trip-day-detail {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.trip-place-timeline {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+}
+
+.trip-place-item {
+  display: flex;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.trip-place-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.trip-place-item.selected {
+  border-left: 4px solid #3498db;
+  background-color: #f1f8ff;
+}
+
+.trip-place-order {
+  margin-right: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.order-circle {
+  width: 26px;
+  height: 26px;
+  background-color: #3498db;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.time-label {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.trip-place-content {
+  flex: 1;
+}
+
+.trip-place-content h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
   color: #333;
-  margin: 0;
-  padding: 0;
 }
 
-.add-day-button {
-  padding: 0.6rem 1.2rem;
+.place-address {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.place-memo {
+  font-size: 0.85rem;
+  color: #555;
+  background-color: #fffbeb;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border-left: 2px solid #f8d171;
+}
+
+.place-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.edit-place-btn, .delete-place-btn {
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: none;
+  background-color: #f1f1f1;
+  color: #333;
+  font-family: inherit;
+}
+
+.delete-place-btn {
+  color: #e74c3c;
+}
+
+.edit-place-btn:hover {
+  background-color: #e9e9e9;
+}
+
+.delete-place-btn:hover {
+  background-color: #fff0f0;
+}
+
+/* 우측 지도 패널 */
+.trip-map-panel {
+  flex: 1;
+  position: relative;
+}
+
+.trip-map {
+  width: 100%;
+  height: 100%;
+}
+
+.region-indicator {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 8px 15px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  z-index: 5;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 지도 컨트롤 버튼 - 지도에 표시 */
+.trip-map-controls {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+}
+
+/* 지도 컨트롤 버튼 - 사이드바 하단에 표시 */
+.trip-map-controls-sidebar {
+  padding: 1rem;
+  background-color: #f7f7f7;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.add-place-btn {
+  padding: 0.8rem 1.5rem;
   background-color: #3498db;
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-family: inherit;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  width: 100%;
 }
 
-.add-day-button:hover {
+.add-place-btn:hover {
   background-color: #2980b9;
 }
 
-.trip-days-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.day-card {
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.day-header {
-  background-color: #f9f9f9;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.day-header h4 {
-  margin: 0;
-  color: #333;
-  font-size: 1.2rem;
-}
-
-.day-places {
-  padding: 1.5rem;
-}
-
-.day-places ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.place-item {
-  display: flex;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.place-item:last-child {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.place-time {
-  font-weight: 500;
-  color: #333;
-  min-width: 80px;
-}
-
-.place-info {
-  flex: 1;
-}
-
-.place-name {
-  font-weight: 500;
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 0.3rem;
-}
-
-.place-address {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.no-places, .no-days {
-  color: #666;
-  font-style: italic;
-  text-align: center;
-  padding: 1.5rem 0;
-}
-
-.no-days {
-  text-align: center;
-  padding: 3rem 0;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  color: #666;
-  font-style: italic;
-}
-
 .back-button-container {
+  padding: 1rem;
   text-align: center;
-  margin-top: 2rem;
+  background-color: #fff;
+  border-top: 1px solid #eee;
 }
 
 .back-button {
-  padding: 0.8rem 1.5rem;
+  padding: 0.6rem 1.2rem;
   background-color: #f1f1f1;
   color: #333;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-family: inherit;
 }
 
 .back-button:hover {
-  background-color: #e0e0e0;
+  background-color: #e9e9e9;
 }
 
 .loading, .error {
-  text-align: center;
-  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
   font-size: 1.2rem;
+  color: #666;
 }
 
 .error {
   color: #e74c3c;
 }
 
-.map-view-button {
-  background-color: #4285f4;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  margin-right: 8px;
-}
-
-.map-view-button:hover {
-  background-color: #3367d6;
-}
-
-.trip-map-container {
-  background-color: white;
+/* 추가 폼 스타일 */
+.add-trip-day-form {
+  background-color: #fff;
+  padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin: 16px 0;
-  overflow: hidden;
+  margin-bottom: 1rem;
 }
 
-.place-list {
-  margin-top: 24px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 16px;
-  max-height: 400px;
-  overflow-y: auto;
+.no-places {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #666;
+  font-style: italic;
 }
 
-.place-list h4 {
-  margin-top: 0;
-  color: #333;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-}
-
-.all-places-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.map-place-item {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.map-place-item:last-child {
-  border-bottom: none;
-}
-
-.place-day-info {
-  font-size: 0.85rem;
-  color: #4285f4;
-  font-weight: 500;
-}
-
-.place-name {
-  font-weight: 500;
-  color: #333;
-}
-
-.place-address {
+/* 지역 정보 오버레이 스타일 */
+.region-info-overlay {
+  background-color: rgba(52, 152, 219, 0.9);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
   font-size: 0.9rem;
-  color: #777;
+}
+
+/* 장소 마커 레이블 스타일 */
+.place-marker-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.place-marker-number {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #3498db;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 } 

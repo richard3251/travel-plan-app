@@ -9,5 +9,7 @@ public class TripModifyRequest {
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
-
+    private String region;
+    private Double regionLat;
+    private Double regionLng;
 }
