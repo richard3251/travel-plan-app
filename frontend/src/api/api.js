@@ -113,8 +113,12 @@ const tripPlaceApi = {
 // 장소 검색 관련 API
 const placeApi = {
   // 장소 검색 (카카오맵 API 활용)
-  searchPlaces: (keyword, lat, lng) => {
-    return api.get(`/search/places?keyword=${encodeURIComponent(keyword)}&lat=${lat}&lng=${lng}`);
+  searchPlaces: (keyword, lat, lng, page = 1, size = 15, tripId = null) => {
+    let url = `/search/places?keyword=${encodeURIComponent(keyword)}&lat=${lat}&lng=${lng}&page=${page}&size=${size}`;
+    if (tripId) {
+      url += `&tripId=${tripId}`;
+    }
+    return api.get(url);
   },
   
   // 검색된 장소를 여행에 저장
@@ -123,4 +127,4 @@ const placeApi = {
   }
 };
 
-export { tripApi, tripDayApi, tripPlaceApi, placeApi }; 
+export { tripApi, tripDayApi, tripPlaceApi, placeApi };

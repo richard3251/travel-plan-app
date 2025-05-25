@@ -22,4 +22,11 @@ public class KakaoPlaceSearchResponse {
        private String place_url;
     }
 
+    @Getter
+    public static class Meta {
+        private int total_count;
+        private int pageable_count;
+        private boolean is_end;
+    }
+
 }

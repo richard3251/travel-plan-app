@@ -30,23 +30,30 @@ public class KakaoPlaceSearchClient {
 //    }
 
     /**
-     * 카카오 장소 검색 요청
+     * 카카오 장소 검색 요청 (페이지네이션 지원)
      * @param keyword 검색어(예: "카페")
      * @param longitude 경도 (x)
      * @param latitude 위도 (y)
+     * @param page 페이지 번호 (1~45)
+     * @param size 한 페이지에 보여질 문서의 개수 (1~15)
      * @return Kakao API로 부터 받은 JSON 문자열 응답
      */
-    public KakaoPlaceSearchResponse searchPlaces(String keyword, double latitude, double longitude) {
-//        log.info("카카오 장소 검색 API 호출: keyword={}, lat={}, lng={}", keyword, latitude, longitude);
-//        log.info("사용 중인 카카오 API 키: {}", kakaoRestApiKey);
+    public KakaoPlaceSearchResponse searchPlaces(String keyword, double latitude, double longitude, int page, int size) {
+
+        // 파라미터 유효성 검사 및 final 변수로 재할당
+        final int validPage = (page < 1 || page > 45) ? 1 : page;
+        final int validSize = (size < 1 || size > 15) ? 15 : size;
+
+        log.info("카카오 장소 검색 API 호출: keyword={}, lat={}, lng={}, page={}, size={}", keyword, latitude, longitude, validPage, validSize);
         
         return webClient.get() // GET 방식 요청 시작
             .uri(uriBuilder -> uriBuilder
                 .queryParam("query", keyword)
                 .queryParam("x", longitude)
                 .queryParam("y", latitude)
-                .queryParam("radius", 3000) // 3km 반경
-                .queryParam("size", 10)
+                .queryParam("radius", 20000) // 20km 반경으로 늘려서 더 많은 검색 결과 제공
+                .queryParam("page", validPage)
+                .queryParam("size", validSize)
                 .build())
             .header("Authorization", "KakaoAK " + kakaoRestApiKey) // 인증용 헤더. KakaoAK 띄어쓰기 필수!
             .retrieve() // 요청을 보내고 응답 수신 대기

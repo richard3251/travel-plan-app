@@ -146,6 +146,20 @@
   margin-top: 0.2rem;
 }
 
+.places-count {
+  font-size: 0.6rem;
+  margin-top: 0.2rem;
+  opacity: 0.8;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 1px 4px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.trip-day-tab.active .places-count {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
 .add-day-tab {
   padding: 0.6rem 1rem;
   background: #f1f1f1;

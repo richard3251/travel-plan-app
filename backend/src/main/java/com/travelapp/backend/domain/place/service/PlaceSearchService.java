@@ -1,6 +1,7 @@
 package com.travelapp.backend.domain.place.service;
 
 import com.travelapp.backend.domain.place.dto.request.PlaceToTripPlaceRequest;
+import com.travelapp.backend.domain.trip.repository.TripRepository;
 import com.travelapp.backend.domain.tripplace.dto.request.TripPlaceCreateRequest;
 import com.travelapp.backend.domain.tripplace.dto.response.TripPlaceResponse;
 import com.travelapp.backend.domain.tripplace.service.TripPlaceService;
@@ -17,8 +18,9 @@ public class PlaceSearchService {
     private final KakaoPlaceSearchClient kakaoPlaceSearchClient;
     private final TripPlaceService tripPlaceService;
 
-    public KakaoPlaceSearchResponse search(String keyword, double lat, double lng) {
-        return kakaoPlaceSearchClient.searchPlaces(keyword, lat, lng);
+    public KakaoPlaceSearchResponse search(String keyword, double lat, double lng, int page, int size) {
+        // 전달받은 좌표를 기준으로 검색 (지역 제한 없음)
+        return kakaoPlaceSearchClient.searchPlaces(keyword, lat, lng, page, size);
     }
 
     @Transactional

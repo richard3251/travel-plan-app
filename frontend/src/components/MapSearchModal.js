@@ -9,11 +9,15 @@ import { Map, MapMarker } from 'react-kakao-maps-sdk';
 const MARKER_IMAGE_URL = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
 const REGION_MARKER_IMAGE_URL = "https://t1.daumcdn.net/localimg/localimages/07/2018/pc/img/marker_spot.png";
 
-const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionName, mapLevel, tripDayId }) => {
+const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionName, mapLevel, tripDayId, tripId }) => {
   const [keyword, setKeyword] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreResults, setHasMoreResults] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
   
   // 지역 좌표를 기본값으로 사용 (서울이 기본값)
   const [currentPosition, setCurrentPosition] = useState({
@@ -46,8 +50,8 @@ const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionNa
     setVisitTime(`${hours}:${minutes}`);
   }, []);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  const handleSearch = async (e, isLoadMore = false) => {
+    if (e) e.preventDefault();
     
     if (!keyword.trim()) {
       alert('검색어를 입력해주세요.');
@@ -55,21 +59,54 @@ const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionNa
     }
     
     try {
-      setLoading(true);
-      setError(null);
+      if (isLoadMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+        setError(null);
+        setCurrentPage(1);
+        setSearchResults([]);
+      }
       
+      const pageToLoad = isLoadMore ? currentPage + 1 : 1;
+      
+      // 현재 지도 중심 좌표를 기준으로 검색 (tripId 제거)
       const response = await placeApi.searchPlaces(
         keyword, 
         currentPosition.lat, 
-        currentPosition.lng
+        currentPosition.lng,
+        pageToLoad,
+        15
+        // tripId 파라미터 제거
       );
       
-      setSearchResults(response.data.documents || []);
+      const newResults = response.data.documents || [];
+      const meta = response.data.meta || {};
+      
+      if (isLoadMore) {
+        setSearchResults(prev => [...prev, ...newResults]);
+        setCurrentPage(pageToLoad);
+      } else {
+        setSearchResults(newResults);
+        setCurrentPage(1);
+      }
+      
+      setTotalCount(meta.total_count || 0);
+      setHasMoreResults(!meta.is_end && newResults.length > 0);
+      
       setLoading(false);
+      setLoadingMore(false);
     } catch (err) {
       console.error('장소 검색 실패:', err);
       setError('장소를 검색하는데 문제가 발생했습니다.');
       setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (!loadingMore && hasMoreResults) {
+      handleSearch(null, true);
     }
   };
   
@@ -112,12 +149,22 @@ const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionNa
     setShowPlaceForm(false);
   };
   
+  // 지도 클릭 시 해당 위치로 이동하고 검색어가 있으면 자동 검색
   const handleMapClick = (target, mouseEvent) => {
-    // 지도 클릭 시 해당 좌표로 위치 이동
-    setCurrentPosition({
+    const newPosition = {
       lat: mouseEvent.latLng.getLat(),
       lng: mouseEvent.latLng.getLng()
-    });
+    };
+    
+    setCurrentPosition(newPosition);
+    
+    // 검색어가 있으면 새로운 위치에서 자동 검색
+    if (keyword.trim()) {
+      // 위치 업데이트 후 검색 실행을 위해 setTimeout 사용
+      setTimeout(() => {
+        handleSearch(null, false);
+      }, 100);
+    }
   };
   
   return (
@@ -127,7 +174,7 @@ const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionNa
           // 검색 및 결과 화면
           <>
             <div className="modal-header">
-              <h3>{regionName || '서울'} 장소 검색</h3>
+              <h3>장소 검색</h3>
               <button className="close-button" onClick={onClose}>×</button>
             </div>
             
@@ -136,22 +183,21 @@ const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionNa
                 type="text"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                placeholder={`${regionName || '서울'}에서 장소를 검색하세요 (예: 카페, 맛집, 관광지)`}
+                placeholder="검색할 장소를 입력하세요 (지도를 클릭해서 검색 위치를 변경할 수 있습니다)"
               />
               <button type="submit" disabled={loading}>
                 {loading ? '검색 중...' : '검색'}
               </button>
             </form>
             
-            <div className="map-search-container">
+            <div className="search-content">
               <div className="map-container">
                 <Map
                   center={{ lat: currentPosition.lat, lng: currentPosition.lng }}
                   style={{ width: '100%', height: '100%' }}
-                  level={mapLevel || 3} // 지도 확대 레벨 (전달받거나 기본값 사용)
+                  level={mapLevel || 3}
                   onClick={handleMapClick}
                 >
-                  {/* 현재 위치 마커 - 지역 중심점 표시 */}
                   <MapMarker
                     position={{ lat: currentPosition.lat, lng: currentPosition.lng }}
                     image={{
@@ -160,7 +206,6 @@ const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionNa
                     }}
                   />
 
-                  {/* 검색 결과 마커들 */}
                   {searchResults.map((place, index) => (
                     <MapMarker
                       key={place.id}
@@ -182,37 +227,55 @@ const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionNa
               </div>
               
               <div className="search-results">
-                <h4>{regionName || '서울'} 지역 검색 결과</h4>
+                <h4>
+                  검색 결과
+                  {totalCount > 0 && (
+                    <span className="result-count"> (총 {totalCount}개)</span>
+                  )}
+                </h4>
                 {loading ? (
                   <div className="loading-results">검색 결과를 불러오는 중...</div>
                 ) : error ? (
                   <div className="search-error">{error}</div>
                 ) : searchResults.length > 0 ? (
-                  <ul className="results-list">
-                    {searchResults.map((place) => (
-                      <li key={place.id} className="result-item">
-                        <div className="result-info">
-                          <div className="result-name">{place.place_name}</div>
-                          <div className="result-category">{place.category_name}</div>
-                          <div className="result-address">{place.address_name}</div>
-                          {place.phone && <div className="result-phone">{place.phone}</div>}
-                        </div>
+                  <>
+                    <ul className="results-list">
+                      {searchResults.map((place) => (
+                        <li key={place.id} className="result-item">
+                          <div className="result-info">
+                            <div className="result-name">{place.place_name}</div>
+                            <div className="result-category">{place.category_name}</div>
+                            <div className="result-address">{place.address_name}</div>
+                            {place.phone && <div className="result-phone">{place.phone}</div>}
+                          </div>
+                          <button 
+                            className="select-place-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              console.log('장소 선택 버튼 클릭:', place);
+                              handlePlaceClick(place);
+                            }}
+                          >
+                            선택
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    {hasMoreResults && (
+                      <div className="load-more-container">
                         <button 
-                          className="select-place-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            console.log('장소 선택 버튼 클릭:', place);
-                            handlePlaceClick(place);
-                          }}
+                          className="load-more-button"
+                          onClick={handleLoadMore}
+                          disabled={loadingMore}
                         >
-                          선택
+                          {loadingMore ? '더 불러오는 중...' : '더보기'}
                         </button>
-                      </li>
-                    ))}
-                  </ul>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="no-results">
-                    {keyword ? `'${keyword}' 검색 결과가 없습니다.` : `${regionName || '서울'} 지역에서 검색할 장소를 입력하세요`}
+                    {keyword ? `'${keyword}' 검색 결과가 없습니다. 지도를 클릭해서 다른 위치에서 검색해보세요.` : '검색할 장소를 입력하고, 지도를 클릭해서 검색 위치를 선택하세요'}
                   </div>
                 )}
               </div>
@@ -279,4 +342,4 @@ const MapSearchModal = ({ onClose, onSelectPlace, regionLat, regionLng, regionNa
   );
 };
 
-export default MapSearchModal; 
+export default MapSearchModal;

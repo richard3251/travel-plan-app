@@ -85,15 +85,17 @@
 }
 
 .map-container {
-  flex: 2;
+  flex: 3;
   position: relative;
   background-color: #f8f8f8;
+  border-right: 1px solid #eaeaea;
 }
 
 .search-results {
-  flex: 1;
+  flex: 2;
   overflow-y: auto;
-  border-left: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
 }
 
 .search-results h4 {
@@ -109,6 +111,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .result-item {
@@ -267,4 +271,47 @@
 
 .confirm-button:hover {
   background-color: #3367d6;
-} 
+}
+
+.result-count {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: normal;
+}
+
+.load-more-container {
+  padding: 16px;
+  text-align: center;
+  border-top: 1px solid #eaeaea;
+}
+
+.load-more-button {
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 200px;
+}
+
+.load-more-button:hover:not(:disabled) {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.load-more-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.search-content {
+  display: flex;
+  flex-direction: row;
+  height: calc(100% - 120px);
+  overflow: hidden;
+}

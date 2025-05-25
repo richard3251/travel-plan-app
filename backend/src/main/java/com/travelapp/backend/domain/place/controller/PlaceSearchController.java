@@ -24,9 +24,13 @@ public class PlaceSearchController {
     public ResponseEntity<KakaoPlaceSearchResponse> searchPlaces(
         @RequestParam String keyword,
         @RequestParam double lat,
-        @RequestParam double lng
-    ) {
-        KakaoPlaceSearchResponse response = placeSearchService.search(keyword, lat, lng);
+        @RequestParam double lng,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "15") int size
+    )
+
+    {
+        KakaoPlaceSearchResponse response = placeSearchService.search(keyword, lat, lng, page, size);
 
         return ResponseEntity.ok(response);
     }

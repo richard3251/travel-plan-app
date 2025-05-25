@@ -4,36 +4,82 @@ import TripPlaceItem from './TripPlaceItem';
 import './TripDayItem.css';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
-const TripDayItem = ({ tripDay, tripId, onDeleteDay }) => {
+const TripDayItem = ({ tripDay, tripId, places = [], onPlaceUpdate, onPlaceDelete }) => {
   const [tripPlaces, setTripPlaces] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [editingPlace, setEditingPlace] = useState(null);
   const [editData, setEditData] = useState({
     memo: '',
     visitTime: ''
   });
   
+  // props로 받은 places를 tripPlaces에 설정
+  useEffect(() => {
+    if (places && places.length >= 0) {
+      setTripPlaces(places.sort((a, b) => a.visitOrder - b.visitOrder));
+      setLoading(false);
+    }
+  }, [places]);
+  
   const fetchPlaces = useCallback(async () => {
+    if (places && places.length > 0) {
+      // props로 데이터를 받은 경우 API 호출하지 않음
+      return;
+    }
+    
     try {
+      setLoading(true);
       const response = await tripPlaceApi.getTripPlaces(tripDay.id);
-      setTripPlaces(response.data);
+      const placesWithDayInfo = response.data.map(place => ({
+        ...place,
+        dayInfo: {
+          dayId: tripDay.id,
+          day: tripDay.day,
+          date: tripDay.date
+        }
+      }));
+      setTripPlaces(placesWithDayInfo);
+      
+      // 상위 컴포넌트에 업데이트된 장소 정보 전달
+      if (onPlaceUpdate) {
+        onPlaceUpdate(tripDay.id, placesWithDayInfo);
+      }
+      
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      alert('장소 목록을 가져오는데 실패했습니다.');
+      console.error('장소 목록을 가져오는데 실패했습니다:', err);
     }
-  }, [tripDay.id]);
+  }, [tripDay.id, places, onPlaceUpdate, tripDay.day, tripDay.date]);
   
   useEffect(() => {
-    fetchPlaces();
-  }, [tripDay.id, fetchPlaces]);
+    if (!places || places.length === 0) {
+      fetchPlaces();
+    }
+  }, [tripDay.id, fetchPlaces, places]);
   
   const handleUpdatePlace = async (placeId, updatedData) => {
     try {
       const response = await tripPlaceApi.updateTripPlace(tripDay.id, placeId, updatedData);
-      setTripPlaces(tripPlaces.map(place => 
-        place.id === placeId ? response.data : place
-      ));
+      const updatedPlace = {
+        ...response.data,
+        dayInfo: {
+          dayId: tripDay.id,
+          day: tripDay.day,
+          date: tripDay.date
+        }
+      };
+      
+      const updatedPlaces = tripPlaces.map(place => 
+        place.id === placeId ? updatedPlace : place
+      );
+      
+      setTripPlaces(updatedPlaces);
+      
+      // 상위 컴포넌트에 업데이트 전달
+      if (onPlaceUpdate) {
+        onPlaceUpdate(tripDay.id, updatedPlaces);
+      }
     } catch (err) {
       alert('장소를 수정하는데 문제가 발생했습니다.');
     }
@@ -54,6 +100,7 @@ const TripDayItem = ({ tripDay, tripId, onDeleteDay }) => {
         { visitOrder: newVisitOrder }
       );
       
+      // 순서 변경 후 데이터 다시 가져오기
       await fetchPlaces();
     } catch (err) {
       alert('장소 순서를 변경하는데 문제가 발생했습니다.');
@@ -65,7 +112,15 @@ const TripDayItem = ({ tripDay, tripId, onDeleteDay }) => {
     if (window.confirm('정말로 이 장소를 삭제하시겠습니까?')) {
       try {
         await tripPlaceApi.deleteTripPlace(tripDay.id, placeId);
-        setTripPlaces(tripPlaces.filter(place => place.id !== placeId));
+        
+        const updatedPlaces = tripPlaces.filter(place => place.id !== placeId);
+        setTripPlaces(updatedPlaces);
+        
+        // 상위 컴포넌트에 삭제 전달
+        if (onPlaceDelete) {
+          onPlaceDelete(placeId);
+        }
+        
         alert('장소가 성공적으로 삭제되었습니다.');
       } catch (err) {
         alert('장소를 삭제하는데 문제가 발생했습니다.');
@@ -113,24 +168,10 @@ const TripDayItem = ({ tripDay, tripId, onDeleteDay }) => {
     }));
   };
   
-  const handleDeleteDay = () => {
-    if (window.confirm('정말로 이 날짜를 삭제하시겠습니까? 모든 장소 정보가 함께 삭제됩니다.')) {
-      onDeleteDay(tripDay.id);
-    }
-  };
-  
   return (
     <div className="day-card">
       <div className="day-header">
         <h4>DAY {tripDay.day} - {new Date(tripDay.date).toLocaleDateString()}</h4>
-        <div className="day-actions">
-          <button 
-            className="delete-day-button"
-            onClick={handleDeleteDay}
-          >
-            날짜 삭제
-          </button>
-        </div>
       </div>
       
       <div className="day-places">
@@ -247,7 +288,14 @@ const TripDayItem = ({ tripDay, tripId, onDeleteDay }) => {
             </DragDropContext>
           </div>
         ) : (
-          <p className="no-places">등록된 장소가 없습니다. 장소 추가 버튼을 사용해 장소를 추가해보세요!</p>
+          <div className="no-places-section">
+            <p className="no-places">등록된 장소가 없습니다.</p>
+            <p className="no-places-hint">오른쪽 지도에서 "장소 추가" 버튼을 사용해 장소를 추가해보세요!</p>
+            <div className="visual-hint">
+              <span className="hint-arrow">👆</span>
+              <span className="hint-text">지도 하단의 "장소 추가" 버튼을 클릭하세요</span>
+            </div>
+          </div>
         )}
       </div>
     </div>
