@@ -1,4 +1,4 @@
-package com.travelapp.backend.global.kakao.dto;
+package com.travelapp.backend.infra.kakao.dto;
 
 import java.util.List;
 import lombok.Getter;

@@ -1,10 +1,12 @@
 package com.travelapp.backend.domain.tripday.service;
 
 import com.travelapp.backend.domain.trip.entity.Trip;
+import com.travelapp.backend.domain.trip.exception.TripNotFoundException;
 import com.travelapp.backend.domain.trip.repository.TripRepository;
 import com.travelapp.backend.domain.tripday.dto.request.TripDayCreateRequest;
 import com.travelapp.backend.domain.tripday.dto.response.TripDayResponse;
 import com.travelapp.backend.domain.tripday.entity.TripDay;
+import com.travelapp.backend.domain.tripday.exception.TripDayNotFoundException;
 import com.travelapp.backend.domain.tripday.repository.TripDayRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class TripDayService {
     public TripDayResponse createTripDay(Long tripId, TripDayCreateRequest request) {
 
         Trip trip = tripRepository.findById(tripId).orElseThrow(
-            () -> new IllegalArgumentException("해당 여행일정이 없습니다.")
+            () -> new TripNotFoundException(tripId)
         );
 
         TripDay tripDay = TripDay.builder()
@@ -38,7 +40,7 @@ public class TripDayService {
     public List<TripDayResponse> getTripDays(Long tripId) {
 
         Trip trip = tripRepository.findById(tripId).orElseThrow(
-            () -> new IllegalArgumentException("해당 여행일정이 없습니다.")
+            () -> new TripNotFoundException(tripId)
         );
 
         return tripDayRepository.findByTrip(trip).stream()
@@ -49,7 +51,7 @@ public class TripDayService {
     @Transactional
     public void deleteTripDay(Long dayId) {
         TripDay tripDay = tripDayRepository.findById(dayId).orElseThrow(
-            () -> new IllegalArgumentException("해당 여행 날짜가 존재하지 않습니다.")
+            () -> new TripDayNotFoundException(dayId)
         );
 
         tripDayRepository.delete(tripDay);

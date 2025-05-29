@@ -1,12 +1,14 @@
 package com.travelapp.backend.domain.tripplace.service;
 
 import com.travelapp.backend.domain.tripday.entity.TripDay;
+import com.travelapp.backend.domain.tripday.exception.TripDayNotFoundException;
 import com.travelapp.backend.domain.tripday.repository.TripDayRepository;
 import com.travelapp.backend.domain.tripplace.dto.request.TripPlaceCreateRequest;
 import com.travelapp.backend.domain.tripplace.dto.request.TripPlaceUpdateRequest;
 import com.travelapp.backend.domain.tripplace.dto.request.VisitOrderUpdateRequest;
 import com.travelapp.backend.domain.tripplace.dto.response.TripPlaceResponse;
 import com.travelapp.backend.domain.tripplace.entity.TripPlace;
+import com.travelapp.backend.domain.tripplace.exception.TripPlaceNotFoundException;
 import com.travelapp.backend.domain.tripplace.repository.TripPlaceRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class TripPlaceService {
     public TripPlaceResponse createTripPlace(Long tripDayId, TripPlaceCreateRequest request) {
 
         TripDay tripDay = tripDayRepository.findById(tripDayId).orElseThrow(
-            () -> new IllegalArgumentException("해당 여행날짜는 존재하지않습니다.")
+            () -> new TripDayNotFoundException(tripDayId)
         );
 
         TripPlace tripPlace = TripPlace.builder()
@@ -119,7 +121,7 @@ public class TripPlaceService {
     private TripPlace existsTripPlace(Long placeId) {
 
         return tripPlaceRepository.findById(placeId).orElseThrow(
-            () -> new IllegalArgumentException("해당 장소는 존재하지않습니다.")
+            () -> new TripPlaceNotFoundException(placeId)
         );
     }
 

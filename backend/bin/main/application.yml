@@ -1,0 +1,38 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:mysql://localhost:3306/travel_app?serverTimezone=Asia/Seoul
+    username: root
+    password: 3251
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update # create, update, none 중 상황에 따라 조정
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  # 404 에러를 예외로 처리하도록 설정
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+kakao:
+  rest-api-key: ${KAKAO_REST_API_KEY}
+
+server:
+  port: 8080
+
+# 로깅 설정
+logging:
+  level:
+    com.travelapp.backend: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

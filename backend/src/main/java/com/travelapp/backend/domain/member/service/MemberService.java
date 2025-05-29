@@ -5,7 +5,11 @@ import com.travelapp.backend.domain.member.dto.request.MemberSignUpRequest;
 import com.travelapp.backend.domain.member.dto.response.MemberResponse;
 import com.travelapp.backend.domain.member.entity.Member;
 import com.travelapp.backend.domain.member.entity.Role;
+import com.travelapp.backend.domain.member.exception.DuplicateEmailException;
+import com.travelapp.backend.domain.member.exception.MemberNotFoundException;
 import com.travelapp.backend.domain.member.repository.MemberRepository;
+import com.travelapp.backend.global.exception.InvalidValueException;
+import com.travelapp.backend.global.exception.dto.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +25,7 @@ public class MemberService {
     @Transactional
     public MemberResponse signUp(MemberSignUpRequest request) {
         if (memberRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("이미 가입된 이메일 입니다.");
+            throw new DuplicateEmailException(request.getEmail());
         }
 
         Member member = Member.builder()
@@ -38,11 +42,11 @@ public class MemberService {
     public MemberResponse login(MemberLoginRequest request) {
 
         Member member = memberRepository.findByEmail(request.getEmail()).orElseThrow(
-            () -> new IllegalArgumentException("가입되지않은 이메일입니다.")
+            MemberNotFoundException:: new
         );
 
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidValueException(ErrorCode.INVALID_PASSWORD);
         }
 
         return MemberResponse.of(member);

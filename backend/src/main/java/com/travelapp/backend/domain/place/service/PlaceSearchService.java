@@ -1,11 +1,10 @@
 package com.travelapp.backend.domain.place.service;
 
 import com.travelapp.backend.domain.place.dto.request.PlaceToTripPlaceRequest;
-import com.travelapp.backend.domain.trip.repository.TripRepository;
 import com.travelapp.backend.domain.tripplace.dto.request.TripPlaceCreateRequest;
 import com.travelapp.backend.domain.tripplace.dto.response.TripPlaceResponse;
 import com.travelapp.backend.domain.tripplace.service.TripPlaceService;
-import com.travelapp.backend.global.kakao.dto.KakaoPlaceSearchResponse;
+import com.travelapp.backend.infra.kakao.dto.KakaoPlaceSearchResponse;
 import com.travelapp.backend.infra.kakao.KakaoPlaceSearchClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

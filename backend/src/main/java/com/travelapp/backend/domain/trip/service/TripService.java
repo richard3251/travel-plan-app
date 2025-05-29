@@ -1,11 +1,13 @@
 package com.travelapp.backend.domain.trip.service;
 
 import com.travelapp.backend.domain.member.entity.Member;
+import com.travelapp.backend.domain.member.exception.MemberNotFoundException;
 import com.travelapp.backend.domain.member.repository.MemberRepository;
 import com.travelapp.backend.domain.trip.dto.request.TripCreateRequest;
 import com.travelapp.backend.domain.trip.dto.request.TripModifyRequest;
 import com.travelapp.backend.domain.trip.dto.response.TripResponse;
 import com.travelapp.backend.domain.trip.entity.Trip;
+import com.travelapp.backend.domain.trip.exception.TripNotFoundException;
 import com.travelapp.backend.domain.trip.repository.TripRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class TripService {
     public void createTrip(Long memberId, TripCreateRequest request) {
 
         Member member = memberRepository.findById(memberId).orElseThrow(
-            () -> new IllegalArgumentException("해당 회원이 존재하지 않습니다.")
+            MemberNotFoundException:: new
         );
 
         Trip trip = Trip.builder()
@@ -75,7 +77,7 @@ public class TripService {
 
     private Trip existsTrip(Long tripId) {
         return tripRepository.findById(tripId).orElseThrow(
-            () -> new IllegalArgumentException("해당 여행일정 없음")
+            () -> new TripNotFoundException(tripId)
         );
     }
 

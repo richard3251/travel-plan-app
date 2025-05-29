@@ -1,12 +1,15 @@
 package com.travelapp.backend.infra.kakao;
 
-import com.travelapp.backend.global.kakao.dto.KakaoPlaceSearchResponse;
+import com.travelapp.backend.global.exception.ExternalApiException;
+import com.travelapp.backend.global.exception.dto.ErrorCode;
+import com.travelapp.backend.infra.kakao.dto.KakaoPlaceSearchResponse;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.reactive.function.client.WebClientException;
 
 @Slf4j
 @Component
@@ -45,24 +48,42 @@ public class KakaoPlaceSearchClient {
         final int validSize = (size < 1 || size > 15) ? 15 : size;
 
         log.info("카카오 장소 검색 API 호출: keyword={}, lat={}, lng={}, page={}, size={}", keyword, latitude, longitude, validPage, validSize);
-        
-        return webClient.get() // GET 방식 요청 시작
-            .uri(uriBuilder -> uriBuilder
-                .queryParam("query", keyword)
-                .queryParam("x", longitude)
-                .queryParam("y", latitude)
-                .queryParam("radius", 20000) // 20km 반경으로 늘려서 더 많은 검색 결과 제공
-                .queryParam("page", validPage)
-                .queryParam("size", validSize)
-                .build())
-            .header("Authorization", "KakaoAK " + kakaoRestApiKey) // 인증용 헤더. KakaoAK 띄어쓰기 필수!
-            .retrieve() // 요청을 보내고 응답 수신 대기
-            .bodyToMono(KakaoPlaceSearchResponse.class) // 응답 JSON을 KakaoPlaceSearchResponse 객체로 변환하여 비동기(Mono) 스트림으로 처리
-            .onErrorResume(e -> {
-                log.error("Kakao API 호출 실패", e);
-                return Mono.empty(); // 예외 발생시 빈 응답
-            })
-            .block(); // block()을 통해 응답을 동기적으로 받음 (간단한 요청 처리 시 유용)
+
+        try {
+            return webClient.get() // GET 방식 요청 시작
+                .uri(uriBuilder -> uriBuilder
+                    .queryParam("query", keyword)
+                    .queryParam("x", longitude)
+                    .queryParam("y", latitude)
+                    .queryParam("radius", 20000) // 20km 반경으로 늘려서 더 많은 검색 결과 제공
+                    .queryParam("page", validPage)
+                    .queryParam("size", validSize)
+                    .build())
+                .header("Authorization", "KakaoAK " + kakaoRestApiKey) // 인증용 헤더. KakaoAK 띄어쓰기 필수!
+                .retrieve() // 요청을 보내고 응답 수신 대기
+                .bodyToMono(KakaoPlaceSearchResponse.class) // 응답 JSON을 KakaoPlaceSearchResponse 객체로 변환하여 비동기(Mono) 스트림으로 처리
+                .timeout(Duration.ofSeconds(10))// 10초 타임아웃 설정
+                .onErrorMap(WebClientException.class, e -> {
+                    log.error("카카오 API 호출 중 WebClient 오류 발생", e);
+                    return new ExternalApiException(ErrorCode.KAKAO_API_ERROR, "카카오 장소 검색 API 호출 실패", e);
+                })
+                .onErrorMap(Exception.class, e -> {
+                    if (e instanceof ExternalApiException) {
+                        return e;
+                    }
+                    log.error("카카오 API 호출 중 예상치 못한 오류 발생", e);
+                    return new ExternalApiException(ErrorCode.KAKAO_API_ERROR, "외부 API 호출 시간 초과 또는 오류", e);
+                })
+                .block(); // block()을 통해 응답을 동기적으로 받음 (간단한 요청 처리 시 유용)
+
+        } catch (Exception e) {
+            log.error("카카오 API 호출 실패", e);
+            if (e instanceof ExternalApiException) {
+                throw e;
+            }
+            throw new ExternalApiException(ErrorCode.KAKAO_API_ERROR, "카카오 장소 검색 API 호출 중 오류가 발생했습니다.", e);
+        }
+
     }
 
 }
