@@ -2,6 +2,7 @@ package com.travelapp.backend.global.exception;
 
 import com.travelapp.backend.global.exception.dto.ErrorCode;
 import com.travelapp.backend.global.exception.dto.ErrorResponse;
+import com.travelapp.backend.global.exception.dto.ErrorResponse.FieldError;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.nio.file.AccessDeniedException;
@@ -68,7 +69,7 @@ public class GlobalExceptionHandler {
         BindException e, HttpServletRequest request) {
         log.error("BindException: {}", e.getMessage(), e);
 
-        List<ErrorResponse.FieldError> fieldErrors = e.getBindingResult()
+        List<FieldError> fieldErrors = e.getBindingResult()
             .getFieldErrors()
             .stream()
             .map(error -> ErrorResponse.FieldError.builder()
@@ -112,7 +113,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     protected ResponseEntity<ErrorResponse> handleAccessDeniedException(
         AccessDeniedException e, HttpServletRequest request) {
-        log.info("AccessDeniedException: {}", e.getMessage(), e);
+        log.error("AccessDeniedException: {}", e.getMessage(), e);
 
         ErrorResponse response = ErrorResponse.of(ErrorCode.HANDLE_ACCESS_DENIED, request.getRequestURI());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);

@@ -25,7 +25,7 @@ public class TripService {
     public void createTrip(Long memberId, TripCreateRequest request) {
 
         Member member = memberRepository.findById(memberId).orElseThrow(
-            MemberNotFoundException:: new
+            MemberNotFoundException::new
         );
 
         Trip trip = Trip.builder()
@@ -80,6 +80,5 @@ public class TripService {
             () -> new TripNotFoundException(tripId)
         );
     }
-
 
 }

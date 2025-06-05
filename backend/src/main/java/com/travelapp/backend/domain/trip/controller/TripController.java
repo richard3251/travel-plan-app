@@ -4,6 +4,7 @@ import com.travelapp.backend.domain.trip.dto.request.TripCreateRequest;
 import com.travelapp.backend.domain.trip.dto.request.TripModifyRequest;
 import com.travelapp.backend.domain.trip.dto.response.TripResponse;
 import com.travelapp.backend.domain.trip.service.TripService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class TripController {
 
     @PostMapping
     public ResponseEntity<Void> createTrip(
-        @RequestBody TripCreateRequest request
+        @Valid @RequestBody TripCreateRequest request
     ) {
         Long memberId = 1L; // TODO: 임시 하드코딩, 나중에 인증 유저로 대체!
 
@@ -50,7 +51,7 @@ public class TripController {
     @PutMapping("/{tripId}")
     public ResponseEntity<Void> modifyTrip(
         @PathVariable Long tripId,
-        @RequestBody TripModifyRequest request
+        @Valid @RequestBody TripModifyRequest request
     ) {
         tripService.modifyTrip(tripId, request);
 

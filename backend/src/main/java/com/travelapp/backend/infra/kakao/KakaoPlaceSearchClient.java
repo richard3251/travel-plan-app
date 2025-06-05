@@ -72,7 +72,7 @@ public class KakaoPlaceSearchClient {
                         return e;
                     }
                     log.error("카카오 API 호출 중 예상치 못한 오류 발생", e);
-                    return new ExternalApiException(ErrorCode.KAKAO_API_ERROR, "외부 API 호출 시간 초과 또는 오류", e);
+                    return new ExternalApiException(ErrorCode.EXTERNAL_API_TIMEOUT, "외부 API 호출 시간 초과 또는 오류", e);
                 })
                 .block(); // block()을 통해 응답을 동기적으로 받음 (간단한 요청 처리 시 유용)
 

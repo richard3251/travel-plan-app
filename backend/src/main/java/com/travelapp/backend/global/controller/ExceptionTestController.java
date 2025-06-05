@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/test")
-public class TestController {
+public class ExceptionTestController {
 
     @GetMapping("/member-not-found")
     public String testMemberNotFoundException() {

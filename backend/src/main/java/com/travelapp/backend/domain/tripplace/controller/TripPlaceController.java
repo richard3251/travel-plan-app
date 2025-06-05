@@ -5,6 +5,7 @@ import com.travelapp.backend.domain.tripplace.dto.request.TripPlaceUpdateRequest
 import com.travelapp.backend.domain.tripplace.dto.request.VisitOrderUpdateRequest;
 import com.travelapp.backend.domain.tripplace.dto.response.TripPlaceResponse;
 import com.travelapp.backend.domain.tripplace.service.TripPlaceService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class TripPlaceController {
     @PostMapping
     public ResponseEntity<TripPlaceResponse> createTripPlace(
         @PathVariable Long tripDayId,
-        @RequestBody TripPlaceCreateRequest request
+        @Valid @RequestBody TripPlaceCreateRequest request
     ) {
         TripPlaceResponse response = tripPlaceService.createTripPlace(tripDayId, request);
 
@@ -48,7 +49,7 @@ public class TripPlaceController {
     @PutMapping("/{placeId}")
     public ResponseEntity<TripPlaceResponse> updateTripPlace(
         @PathVariable Long placeId,
-        @RequestBody TripPlaceUpdateRequest request
+        @Valid @RequestBody TripPlaceUpdateRequest request
     ) {
 
         TripPlaceResponse response = tripPlaceService.updateTripPlace(placeId, request);
@@ -59,7 +60,7 @@ public class TripPlaceController {
     @PatchMapping("/{placeId}/order")
     public ResponseEntity<TripPlaceResponse> updateVisitOrder(
         @PathVariable Long placeId,
-        @RequestBody VisitOrderUpdateRequest request
+        @Valid @RequestBody VisitOrderUpdateRequest request
     ) {
 
         TripPlaceResponse response = tripPlaceService.updateVisitOrder(placeId, request);

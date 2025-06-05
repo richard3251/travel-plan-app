@@ -4,6 +4,7 @@ import com.travelapp.backend.domain.member.dto.request.MemberLoginRequest;
 import com.travelapp.backend.domain.member.dto.request.MemberSignUpRequest;
 import com.travelapp.backend.domain.member.dto.response.MemberResponse;
 import com.travelapp.backend.domain.member.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<MemberResponse> signup(
-        @RequestBody MemberSignUpRequest request
+       @Valid @RequestBody MemberSignUpRequest request
     ) {
         MemberResponse response = memberService.signUp(request);
 
@@ -29,7 +30,7 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<MemberResponse> login(
-        @RequestBody MemberLoginRequest request
+        @Valid @RequestBody MemberLoginRequest request
     ) {
         MemberResponse response = memberService.login(request);
 

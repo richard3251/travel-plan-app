@@ -42,7 +42,7 @@ public class MemberService {
     public MemberResponse login(MemberLoginRequest request) {
 
         Member member = memberRepository.findByEmail(request.getEmail()).orElseThrow(
-            MemberNotFoundException:: new
+            MemberNotFoundException::new
         );
 
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
