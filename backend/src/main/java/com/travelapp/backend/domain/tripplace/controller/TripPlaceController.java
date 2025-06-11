@@ -69,10 +69,10 @@ public class TripPlaceController {
     }
 
     @DeleteMapping("/{placeId}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteTripPlace(
         @PathVariable Long placeId
     ) {
-        tripPlaceService.delete(placeId);
+        tripPlaceService.deleteTripPlace(placeId);
 
         return ResponseEntity.ok().build();
     }

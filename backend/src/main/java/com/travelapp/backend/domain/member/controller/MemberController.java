@@ -2,6 +2,7 @@ package com.travelapp.backend.domain.member.controller;
 
 import com.travelapp.backend.domain.member.dto.request.MemberLoginRequest;
 import com.travelapp.backend.domain.member.dto.request.MemberSignUpRequest;
+import com.travelapp.backend.domain.member.dto.response.MemberLoginResponse;
 import com.travelapp.backend.domain.member.dto.response.MemberResponse;
 import com.travelapp.backend.domain.member.service.MemberService;
 import jakarta.validation.Valid;
@@ -29,10 +30,10 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<MemberResponse> login(
+    public ResponseEntity<MemberLoginResponse> login(
         @Valid @RequestBody MemberLoginRequest request
     ) {
-        MemberResponse response = memberService.login(request);
+        MemberLoginResponse response = memberService.login(request);
 
         return ResponseEntity.ok(response);
     }

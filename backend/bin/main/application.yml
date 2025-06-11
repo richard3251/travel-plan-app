@@ -26,6 +26,10 @@ spring:
 kakao:
   rest-api-key: ${KAKAO_REST_API_KEY}
 
+jwt:
+  secret: ${JWT_SECRET:dGhpc2lzYXNlY3JldGtleWZvcnRyYXZlbGFwcGp3dHRva2VudGhhdGlzdmVyeWxvbmdfc2VjcmV0}
+  expiration: 86400000 # 24시간 (밀리초)
+
 server:
   port: 8080
 

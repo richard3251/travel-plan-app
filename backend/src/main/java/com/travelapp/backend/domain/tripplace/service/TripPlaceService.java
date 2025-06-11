@@ -1,5 +1,6 @@
 package com.travelapp.backend.domain.tripplace.service;
 
+import com.travelapp.backend.domain.trip.service.TripService;
 import com.travelapp.backend.domain.tripday.entity.TripDay;
 import com.travelapp.backend.domain.tripday.exception.TripDayNotFoundException;
 import com.travelapp.backend.domain.tripday.repository.TripDayRepository;
@@ -21,6 +22,7 @@ public class TripPlaceService {
 
     private final TripPlaceRepository tripPlaceRepository;
     private final TripDayRepository tripDayRepository;
+    private final TripService tripService;
 
     @Transactional
     public TripPlaceResponse createTripPlace(Long tripDayId, TripPlaceCreateRequest request) {
@@ -28,6 +30,9 @@ public class TripPlaceService {
         TripDay tripDay = tripDayRepository.findById(tripDayId).orElseThrow(
             () -> new TripDayNotFoundException(tripDayId)
         );
+
+        // TripDay가 속한 Trip의 소유자 확인
+        tripService.findTripWithOwnerValidation(tripDay.getTrip().getId());
 
         TripPlace tripPlace = TripPlace.builder()
             .tripDay(tripDay)
@@ -47,6 +52,12 @@ public class TripPlaceService {
     @Transactional(readOnly = true)
     public List<TripPlaceResponse> getTripPlaces(Long tripDayId) {
 
+        TripDay tripDay = tripDayRepository.findById(tripDayId).orElseThrow(
+            () -> new TripDayNotFoundException(tripDayId)
+        );
+
+        tripService.findTripWithOwnerValidation(tripDay.getTrip().getId());
+
         return tripPlaceRepository.findByTripDay_Id(tripDayId).stream()
             .map(TripPlaceResponse :: of)
             .toList();
@@ -56,6 +67,8 @@ public class TripPlaceService {
     public TripPlaceResponse updateTripPlace(Long placeId, TripPlaceUpdateRequest request) {
 
         TripPlace tripPlace = existsTripPlace(placeId);
+
+        tripService.findTripWithOwnerValidation(tripPlace.getTripDay().getTrip().getId());
 
         tripPlace.update(request);
         tripPlaceRepository.save(tripPlace);
@@ -67,6 +80,9 @@ public class TripPlaceService {
     public TripPlaceResponse updateVisitOrder(Long placeId, VisitOrderUpdateRequest request) {
 
         TripPlace tripPlace = existsTripPlace(placeId);
+
+        tripService.findTripWithOwnerValidation(tripPlace.getTripDay().getTrip().getId());
+
         Integer oldOrder = tripPlace.getVisitOrder();
         Integer newOrder = request.getVisitOrder();
 
@@ -111,9 +127,11 @@ public class TripPlaceService {
     }
 
     @Transactional
-    public void delete(Long placeId) {
+    public void deleteTripPlace(Long placeId) {
 
         TripPlace tripPlace = existsTripPlace(placeId);
+
+        tripService.findTripWithOwnerValidation(tripPlace.getTripDay().getTrip().getId());
 
         tripPlaceRepository.delete(tripPlace);
     }

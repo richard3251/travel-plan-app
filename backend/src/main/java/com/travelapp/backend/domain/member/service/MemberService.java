@@ -2,6 +2,7 @@ package com.travelapp.backend.domain.member.service;
 
 import com.travelapp.backend.domain.member.dto.request.MemberLoginRequest;
 import com.travelapp.backend.domain.member.dto.request.MemberSignUpRequest;
+import com.travelapp.backend.domain.member.dto.response.MemberLoginResponse;
 import com.travelapp.backend.domain.member.dto.response.MemberResponse;
 import com.travelapp.backend.domain.member.entity.Member;
 import com.travelapp.backend.domain.member.entity.Role;
@@ -10,6 +11,7 @@ import com.travelapp.backend.domain.member.exception.MemberNotFoundException;
 import com.travelapp.backend.domain.member.repository.MemberRepository;
 import com.travelapp.backend.global.exception.InvalidValueException;
 import com.travelapp.backend.global.exception.dto.ErrorCode;
+import com.travelapp.backend.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public MemberResponse signUp(MemberSignUpRequest request) {
@@ -39,7 +42,7 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberResponse login(MemberLoginRequest request) {
+    public MemberLoginResponse login(MemberLoginRequest request) {
 
         Member member = memberRepository.findByEmail(request.getEmail()).orElseThrow(
             MemberNotFoundException::new
@@ -49,7 +52,9 @@ public class MemberService {
             throw new InvalidValueException(ErrorCode.INVALID_PASSWORD);
         }
 
-        return MemberResponse.of(member);
+        String accessToken = jwtUtil.generateToken(member.getId(), member.getEmail());
+
+        return MemberLoginResponse.of(member, accessToken);
     }
 
 

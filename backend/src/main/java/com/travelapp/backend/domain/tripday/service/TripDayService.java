@@ -1,8 +1,7 @@
 package com.travelapp.backend.domain.tripday.service;
 
 import com.travelapp.backend.domain.trip.entity.Trip;
-import com.travelapp.backend.domain.trip.exception.TripNotFoundException;
-import com.travelapp.backend.domain.trip.repository.TripRepository;
+import com.travelapp.backend.domain.trip.service.TripService;
 import com.travelapp.backend.domain.tripday.dto.request.TripDayCreateRequest;
 import com.travelapp.backend.domain.tripday.dto.response.TripDayResponse;
 import com.travelapp.backend.domain.tripday.entity.TripDay;
@@ -18,14 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class TripDayService {
 
     private final TripDayRepository tripDayRepository;
-    private final TripRepository tripRepository;
+    private final TripService tripService;
 
     @Transactional
     public TripDayResponse createTripDay(Long tripId, TripDayCreateRequest request) {
 
-        Trip trip = tripRepository.findById(tripId).orElseThrow(
-            () -> new TripNotFoundException(tripId)
-        );
+        Trip trip = tripService.findTripWithOwnerValidation(tripId);
 
         TripDay tripDay = TripDay.builder()
             .trip(trip)
@@ -39,9 +36,7 @@ public class TripDayService {
     @Transactional
     public List<TripDayResponse> getTripDays(Long tripId) {
 
-        Trip trip = tripRepository.findById(tripId).orElseThrow(
-            () -> new TripNotFoundException(tripId)
-        );
+        Trip trip = tripService.findTripWithOwnerValidation(tripId);
 
         return tripDayRepository.findByTrip(trip).stream()
             .map(TripDayResponse :: of)
@@ -53,6 +48,8 @@ public class TripDayService {
         TripDay tripDay = tripDayRepository.findById(dayId).orElseThrow(
             () -> new TripDayNotFoundException(dayId)
         );
+
+        tripService.findTripWithOwnerValidation(tripDay.getTrip().getId());
 
         tripDayRepository.delete(tripDay);
     }

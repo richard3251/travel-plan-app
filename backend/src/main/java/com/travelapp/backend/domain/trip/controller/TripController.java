@@ -4,6 +4,7 @@ import com.travelapp.backend.domain.trip.dto.request.TripCreateRequest;
 import com.travelapp.backend.domain.trip.dto.request.TripModifyRequest;
 import com.travelapp.backend.domain.trip.dto.response.TripResponse;
 import com.travelapp.backend.domain.trip.service.TripService;
+import com.travelapp.backend.global.util.SecurityUtil;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class TripController {
     public ResponseEntity<Void> createTrip(
         @Valid @RequestBody TripCreateRequest request
     ) {
-        Long memberId = 1L; // TODO: 임시 하드코딩, 나중에 인증 유저로 대체!
+        Long memberId = SecurityUtil.getCurrentMemberId();
 
         tripService.createTrip(memberId, request);
         return ResponseEntity.ok().build();
@@ -36,7 +37,8 @@ public class TripController {
 
     @GetMapping
     public ResponseEntity<List<TripResponse>> getTrips() {
-        Long memberId = 1L; // TODO: 임시 하드코딩, 나중에 인증 유저로 대체!
+
+        Long memberId = SecurityUtil.getCurrentMemberId();
 
         return ResponseEntity.ok(tripService.getTrips(memberId));
     }
