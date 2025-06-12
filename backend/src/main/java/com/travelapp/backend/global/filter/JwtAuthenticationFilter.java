@@ -33,14 +33,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String token = resolveToken(request);
+        try {
+            String token = resolveToken(request);
 
-        if (token != null && jwtUtil.validateToken(token)) {
-            Authentication authentication = getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.debug("Security Context에 '{}' 인증 정보를 저장했습니다.", authentication.getName());
-        } else {
-            log.debug("유효한 JWT 토큰이 없습니다.");
+            if (token != null && jwtUtil.validateToken(token)) {
+                Authentication authentication = getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.debug("Security Context에 사용자 ID '{}' 인증 정보를 저장했습니다.",
+                    authentication.getPrincipal());
+            } else {
+                log.debug("유효한 JWT 토큰이 없습니다. URI: {}", request.getRequestURI());
+            }
+        } catch (Exception e) {
+            log.error("JWT 인증 처리 중 오류 발생: {}, URI: {}", e.getMessage(), request.getRequestURI());
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
@@ -61,15 +67,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * JWT 토큰에서 인증 정보 추출
      */
     private Authentication getAuthentication(String token) {
-        Long memberId = jwtUtil.getMemberIdFromToken(token);
-        String email = jwtUtil.getEmailFromToken(token);
 
-        // 사용자 권한 설정 (현재는 기본 권한만 부여)
-        return new UsernamePasswordAuthenticationToken(
-            memberId,
-            null,
-            AuthorityUtils.createAuthorityList("ROLE_USER") // authorities
-        );
+        try {
+            Long memberId = jwtUtil.getMemberIdFromToken(token);
+            String email = jwtUtil.getEmailFromToken(token);
+
+            log.debug("JWT 토큰에서 사용자 정보 추출 성공 - ID: {}, Email: {}", memberId, email);
+
+            // 사용자 권한 설정 (현재는 기본 권한만 부여)
+            return new UsernamePasswordAuthenticationToken(
+                memberId, // principal
+                null, // credentials
+                AuthorityUtils.createAuthorityList("ROLE_USER") // authorities
+            );
+        } catch (Exception e) {
+            log.error("JWT 토큰에서 인증 정보 추출 실패: {}", e.getMessage());
+            throw e;
+        }
 
     }
 

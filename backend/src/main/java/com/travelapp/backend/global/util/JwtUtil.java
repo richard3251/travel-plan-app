@@ -1,5 +1,6 @@
 package com.travelapp.backend.global.util;
 
+import com.travelapp.backend.domain.auth.exception.InvalidTokenException;
 import com.travelapp.backend.global.config.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -41,19 +42,67 @@ public class JwtUtil {
     }
 
     /**
+     * 리프레시 토큰 생성 (7일간 우효)
+     */
+    public String generateRefreshToken(Long memberId) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + (7 * 24 * 60 * 60 * 1000L)); // 7일
+
+        return Jwts.builder()
+            .subject(String.valueOf(memberId))
+            .claim("type", "refresh")
+            .issuedAt(now)
+            .expiration(expiryDate)
+            .signWith(getSigningKey())
+            .compact();
+    }
+
+    /**
+     * 리프레시 토큰 여부 확인
+     */
+    public boolean isRefreshToken(String token) {
+        try {
+            Claims claims = getClaims(token);
+            return "refresh".equals(claims.get("type", String.class));
+        } catch (Exception e ) {
+            return false;
+        }
+    }
+
+    /**
      * JWT 토큰에서 memberId 추출
      */
     public Long getMemberIdFromToken(String token) {
-        Claims claims = getClaims(token);
-        return Long.parseLong(claims.getSubject());
+
+        try {
+            Claims claims = getClaims(token);
+            return Long.parseLong(claims.getSubject());
+        } catch (NumberFormatException e) {
+            log.error("Invalid memberId format in JWT token: {}", e.getMessage());
+            throw new InvalidTokenException("잘못된 사용자 ID 형식입니다.");
+        } catch (Exception e) {
+            log.error("Failed to extract memberId from token: {}", e.getMessage());
+            throw new InvalidTokenException("토큰에서 사용자 ID를 추출할 수 없습니다");
+        }
     }
 
     /**
      * JWT 토큰에서 사용자 email 추출
      */
     public String getEmailFromToken(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("email", String.class);
+
+        try {
+            Claims claims = getClaims(token);
+            String email = claims.get("email", String.class);
+
+            if (email == null) {
+                throw new InvalidTokenException("토큰에 이메일 정보가 없습니다.");
+            }
+            return email;
+        } catch (Exception e) {
+            log.error("Failed to extract email from token: {}", e.getMessage());
+            throw new InvalidTokenException("토큰에서 이메일을 추출할 수 없습니다.");
+        }
     }
 
     /**
@@ -99,8 +148,14 @@ public class JwtUtil {
      * JWT 토큰 만료 여부 확인
      */
     public boolean isTokenExpired(String token) {
-        Date expirationDate = getExpirationDateFromToken(token);
-        return expirationDate.before(new Date());
+
+        try {
+            Date expirationDate = getExpirationDateFromToken(token);
+            return expirationDate.before(new Date());
+        } catch (Exception e) {
+            log.error("Failed to check token expiration: {}", e.getMessage());
+            return true;
+        }
     }
 
 
