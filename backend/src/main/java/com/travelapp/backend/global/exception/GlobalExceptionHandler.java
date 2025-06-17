@@ -1,5 +1,6 @@
 package com.travelapp.backend.global.exception;
 
+import com.travelapp.backend.domain.auth.exception.InvalidTokenException;
 import com.travelapp.backend.global.exception.dto.ErrorCode;
 import com.travelapp.backend.global.exception.dto.ErrorResponse;
 import com.travelapp.backend.global.exception.dto.ErrorResponse.FieldError;
@@ -40,6 +41,34 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * JWT 토큰 관련 예외 처리
+     */
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTokenException(
+        InvalidTokenException e, HttpServletRequest request) {
+        log.warn("Invalid token exception: {}", e.getMessage());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_TOKEN, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    /**
+     * 인증되지 않은 사용자 예외 처리
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(
+        IllegalStateException e, HttpServletRequest request) {
+        if (e.getMessage() != null && e.getMessage().contains("인증되지 않은 사용자")) {
+            log.warn("Unauthorized access: {}", e.getMessage());
+            ErrorResponse response = ErrorResponse.of(ErrorCode.UNAUTHORIZED, request.getRequestURI());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        log.error("Illegal state exception: {}", e.getMessage());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    /**
      * @Valid 바인딩 오류 처리
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -57,7 +86,8 @@ public class GlobalExceptionHandler {
                 .build())
             .collect(Collectors.toList());
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, request.getRequestURI(), fieldErrors);
+        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE,
+            request.getRequestURI(), fieldErrors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
@@ -79,7 +109,8 @@ public class GlobalExceptionHandler {
                 .build())
             .collect(Collectors.toList());
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, request.getRequestURI(), fieldErrors);
+        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE,
+            request.getRequestURI(), fieldErrors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
@@ -91,7 +122,8 @@ public class GlobalExceptionHandler {
         MethodArgumentTypeMismatchException e, HttpServletRequest request) {
         log.error("MethodArgumentTypeMismatchException: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_TYPE_VALUE, request.getRequestURI());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_TYPE_VALUE,
+            request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
@@ -103,7 +135,8 @@ public class GlobalExceptionHandler {
         HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
         log.error("HttpRequestMethodNotSupportedException: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED, request.getRequestURI());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED,
+            request.getRequestURI());
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(response);
     }
 
@@ -115,7 +148,8 @@ public class GlobalExceptionHandler {
         AccessDeniedException e, HttpServletRequest request) {
         log.error("AccessDeniedException: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.HANDLE_ACCESS_DENIED, request.getRequestURI());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.HANDLE_ACCESS_DENIED,
+            request.getRequestURI());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
@@ -127,7 +161,8 @@ public class GlobalExceptionHandler {
         MissingServletRequestParameterException e, HttpServletRequest request) {
         log.error("MissingServletRequestParameterException: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.MISSING_REQUEST_PARAMETER, request.getRequestURI());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.MISSING_REQUEST_PARAMETER,
+            request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
@@ -139,7 +174,8 @@ public class GlobalExceptionHandler {
         HttpMessageNotReadableException e, HttpServletRequest request) {
         log.error("HttpMessageNotReadableException: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_REQUEST_BODY, request.getRequestURI());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_REQUEST_BODY,
+            request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
@@ -151,7 +187,8 @@ public class GlobalExceptionHandler {
         NoHandlerFoundException e, HttpServletRequest request) {
         log.error("NoHandlerFoundException: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.ENTITY_NOT_FOUND, request.getRequestURI());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.ENTITY_NOT_FOUND,
+            request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
@@ -163,7 +200,8 @@ public class GlobalExceptionHandler {
         ConstraintViolationException e, HttpServletRequest request) {
         log.error("ConstraintViolationException: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.CONSTRAINT_VIOLATION, request.getRequestURI());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.CONSTRAINT_VIOLATION,
+            request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
@@ -175,7 +213,8 @@ public class GlobalExceptionHandler {
         DataIntegrityViolationException e, HttpServletRequest request) {
         log.error("DataIntegrityViolationException: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.CONSTRAINT_VIOLATION, request.getRequestURI());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.CONSTRAINT_VIOLATION,
+            request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
@@ -187,7 +226,8 @@ public class GlobalExceptionHandler {
         Exception e, HttpServletRequest request) {
         log.error("Exception: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, request.getRequestURI());
+        ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR,
+            request.getRequestURI());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 

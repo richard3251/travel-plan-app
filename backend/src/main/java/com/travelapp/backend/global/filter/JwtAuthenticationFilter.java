@@ -67,7 +67,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * JWT 토큰에서 인증 정보 추출
      */
     private Authentication getAuthentication(String token) {
-
         try {
             Long memberId = jwtUtil.getMemberIdFromToken(token);
             String email = jwtUtil.getEmailFromToken(token);
@@ -84,7 +83,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.error("JWT 토큰에서 인증 정보 추출 실패: {}", e.getMessage());
             throw e;
         }
-
     }
 
 

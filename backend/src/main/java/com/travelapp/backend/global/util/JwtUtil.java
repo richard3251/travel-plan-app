@@ -42,7 +42,7 @@ public class JwtUtil {
     }
 
     /**
-     * 리프레시 토큰 생성 (7일간 우효)
+     * 리프레시 토큰 생성 (7일간 유효)
      */
     public String generateRefreshToken(Long memberId) {
         Date now = new Date();
@@ -64,7 +64,7 @@ public class JwtUtil {
         try {
             Claims claims = getClaims(token);
             return "refresh".equals(claims.get("type", String.class));
-        } catch (Exception e ) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -73,7 +73,6 @@ public class JwtUtil {
      * JWT 토큰에서 memberId 추출
      */
     public Long getMemberIdFromToken(String token) {
-
         try {
             Claims claims = getClaims(token);
             return Long.parseLong(claims.getSubject());
@@ -82,7 +81,7 @@ public class JwtUtil {
             throw new InvalidTokenException("잘못된 사용자 ID 형식입니다.");
         } catch (Exception e) {
             log.error("Failed to extract memberId from token: {}", e.getMessage());
-            throw new InvalidTokenException("토큰에서 사용자 ID를 추출할 수 없습니다");
+            throw new InvalidTokenException("토큰에서 사용자 ID를 추출할 수 없습니다.");
         }
     }
 
@@ -90,7 +89,6 @@ public class JwtUtil {
      * JWT 토큰에서 사용자 email 추출
      */
     public String getEmailFromToken(String token) {
-
         try {
             Claims claims = getClaims(token);
             String email = claims.get("email", String.class);
@@ -148,15 +146,13 @@ public class JwtUtil {
      * JWT 토큰 만료 여부 확인
      */
     public boolean isTokenExpired(String token) {
-
         try {
             Date expirationDate = getExpirationDateFromToken(token);
             return expirationDate.before(new Date());
         } catch (Exception e) {
             log.error("Failed to check token expiration: {}", e.getMessage());
-            return true;
+            return true; // 예외 발생 시 만료된 것으로 처리
         }
     }
-
 
 }

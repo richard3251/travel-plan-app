@@ -2,8 +2,10 @@ package com.travelapp.backend.domain.member.service;
 
 import com.travelapp.backend.domain.member.dto.request.MemberLoginRequest;
 import com.travelapp.backend.domain.member.dto.request.MemberSignUpRequest;
+import com.travelapp.backend.domain.member.dto.request.TokenRefreshRequest;
 import com.travelapp.backend.domain.member.dto.response.MemberLoginResponse;
 import com.travelapp.backend.domain.member.dto.response.MemberResponse;
+import com.travelapp.backend.domain.member.dto.response.TokenRefreshResponse;
 import com.travelapp.backend.domain.member.entity.Member;
 import com.travelapp.backend.domain.member.entity.Role;
 import com.travelapp.backend.domain.member.exception.DuplicateEmailException;
@@ -53,8 +55,47 @@ public class MemberService {
         }
 
         String accessToken = jwtUtil.generateToken(member.getId(), member.getEmail());
+        String refreshToken = jwtUtil.generateRefreshToken(member.getId());
 
-        return MemberLoginResponse.of(member, accessToken);
+        return MemberLoginResponse.of(member, accessToken, refreshToken);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberResponse getMemberById(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            MemberNotFoundException :: new
+        );
+
+        return MemberResponse.of(member);
+    }
+
+    @Transactional
+    public TokenRefreshResponse refreshToken(TokenRefreshRequest request) {
+        String refreshToken =  request.getRefreshToken();
+
+        // 리프레시 토큰 유효성 검증
+        if (!jwtUtil.validateToken(refreshToken)) {
+            throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
+        }
+
+        // 리프레시 토큰인지 확인
+        if (!jwtUtil.isRefreshToken(refreshToken)) {
+            throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
+        }
+
+        // 토큰에서 사용자 ID 추출
+        Long memberId = jwtUtil.getMemberIdFromToken(refreshToken);
+
+        // 사용자 존재 여부 확인
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            MemberNotFoundException::new
+        );
+
+        // 새로운 토큰 생성
+        String newAccessToken = jwtUtil.generateToken(member.getId(), member.getEmail());
+        String newRefreshToken = jwtUtil.generateRefreshToken(member.getId());
+
+        return TokenRefreshResponse.of(newAccessToken, newRefreshToken);
     }
 
 
