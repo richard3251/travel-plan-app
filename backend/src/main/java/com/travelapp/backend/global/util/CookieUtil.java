@@ -34,7 +34,7 @@ public class CookieUtil {
         cookie.setMaxAge(maxAge);           // 만료 시간 설정
         // cookie.setSameSite("Strict");    // CSRF 방지(Spring Boot 2.6+에서 지원)
 
-        log.debug("쿠키 생성: name={}, maxAge = {}, secure = {}");
+        log.debug("쿠키 생성: name={}, maxAge = {}, secure = {}", name, maxAge, isSecure);
         return cookie;
     }
 

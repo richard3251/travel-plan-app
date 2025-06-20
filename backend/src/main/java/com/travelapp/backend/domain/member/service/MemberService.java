@@ -2,7 +2,6 @@ package com.travelapp.backend.domain.member.service;
 
 import com.travelapp.backend.domain.member.dto.request.MemberLoginRequest;
 import com.travelapp.backend.domain.member.dto.request.MemberSignUpRequest;
-import com.travelapp.backend.domain.member.dto.request.TokenRefreshRequest;
 import com.travelapp.backend.domain.member.dto.response.MemberLoginResponse;
 import com.travelapp.backend.domain.member.dto.response.MemberResponse;
 import com.travelapp.backend.domain.member.dto.response.TokenRefreshResponse;
@@ -70,8 +69,7 @@ public class MemberService {
     }
 
     @Transactional
-    public TokenRefreshResponse refreshToken(TokenRefreshRequest request) {
-        String refreshToken =  request.getRefreshToken();
+    public TokenRefreshResponse refreshToken(String refreshToken) {
 
         // 리프레시 토큰 유효성 검증
         if (!jwtUtil.validateToken(refreshToken)) {
