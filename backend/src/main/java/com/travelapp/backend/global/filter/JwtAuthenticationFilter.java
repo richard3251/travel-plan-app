@@ -1,5 +1,6 @@
 package com.travelapp.backend.global.filter;
 
+import com.travelapp.backend.global.util.CookieUtil;
 import com.travelapp.backend.global.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -53,13 +54,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Request Header에서 토큰 정보를 추출
+     * Request Header 또는 Cookie에서 토큰 정보를 추출
+     * 우선순위: Authorization Header > Cookie
      */
     private String resolveToken(HttpServletRequest request) {
+        // 1. Authorization Header에서 먼저 확인 (API 클라이언트용)
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            log.debug("Authorization Header에서 토큰 추출");
             return bearerToken.substring(BEARER_PREFIX.length());
         }
+
+        // 2. Cookie에서 Access Token 확인 (웹 브라우저 용)
+        String cookieToken = CookieUtil.getAccessTokenFromCookie(request);
+        if (StringUtils.hasText(cookieToken)) {
+            log.debug("쿠키에서 Access Token 추출");
+            return cookieToken;
+        }
+
+        log.debug("토큰을 찾을 수 없음 - Header: {}, Cookie: {}", bearerToken != null, cookieToken != null);
         return null;
     }
 
