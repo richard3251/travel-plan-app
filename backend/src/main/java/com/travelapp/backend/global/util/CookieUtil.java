@@ -94,7 +94,7 @@ public class CookieUtil {
     /**
      * Refresh Token 쿠키에서 값 추출
      */
-    public static String getRefreshTokenCookieName(HttpServletRequest request) {
+    public static String getRefreshTokenFromCookie(HttpServletRequest request) {
         return getCookieValue(request, REFRESH_TOKEN_COOKIE_NAME);
     }
 
