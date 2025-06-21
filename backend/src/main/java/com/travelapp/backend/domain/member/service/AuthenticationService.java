@@ -89,9 +89,5 @@ public class AuthenticationService {
     private boolean isProductionEnvironment() {
         return "prod".equals(activeProfile);
     }
-
-
-
-
-
+    
 }
