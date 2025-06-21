@@ -4,6 +4,8 @@ import com.travelapp.backend.domain.member.dto.request.MemberLoginRequest;
 import com.travelapp.backend.domain.member.dto.response.MemberLoginResponse;
 import com.travelapp.backend.domain.member.dto.response.MemberResponse;
 import com.travelapp.backend.domain.member.dto.response.TokenRefreshResponse;
+import com.travelapp.backend.global.exception.InvalidValueException;
+import com.travelapp.backend.global.exception.dto.ErrorCode;
 import com.travelapp.backend.global.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,7 +53,7 @@ public class AuthenticationService {
 
         if (!StringUtils.hasText(refreshToken)) {
             log.warn("토큰 갱신 실패 - Refresh Token이 쿠키에 없음");
-            throw new IllegalArgumentException("Refresh Token이 없습니다."); // TODO: 예외처리 커스터마이징
+            throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
         }
 
         // 토큰 갱신
