@@ -23,12 +23,12 @@ spring:
     resources:
       add-mappings: false
 
-kakao:
-  rest-api-key: ${KAKAO_REST_API_KEY}
-
 jwt:
-  secret: ${JWT_SECRET}
-  expiration: 86400000 # 24시간 (밀리초)
+  secret: ${JWT_SECRET:dGhpc2lzYXNlY3JldGtleWZvcnRyYXZlbGFwcGp3dHRva2VudGhhdGlzdmVyeWxvbmdfc2VjcmV0}
+  expiration: 86400000
+
+kakao:
+  rest-api-key: ${KAKAO_REST_API_KEY:3298abd84c29ad502e35b30dd1fbdbcb}
 
 server:
   port: 8080
