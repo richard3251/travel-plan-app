@@ -1,0 +1,31 @@
+services:
+  # Redis 서비스 (개발용)
+  redis:
+    image: redis:7-alpine
+    container_name: travel-app-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_dev:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
+  # MySQL 서비스 (개발용)
+  mysql:
+    image: mysql:8.0
+    container_name: travel-app-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: 3251
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: travel_app
+      MYSQL_USER: travel_user
+      MYSQL_PASSWORD: travel_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data_dev:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  redis_data_dev:
+  mysql_data_dev: 

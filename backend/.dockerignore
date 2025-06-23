@@ -1,0 +1,26 @@
+# Gradle 빌드 결과물
+build/
+.gradle/
+
+# IDE 설정 파일
+.idea/
+*.iml
+*.iws
+
+# 로그 파일
+*.log
+
+# 임시 파일
+*.tmp
+*.temp
+
+# OS 관련 파일
+.DS_Store
+Thumbs.db
+
+# Git 관련
+.git/
+.gitignore
+
+# 환경 설정 파일
+.env 

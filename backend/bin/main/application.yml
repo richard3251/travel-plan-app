@@ -30,6 +30,19 @@ jwt:
 kakao:
   rest-api-key: ${KAKAO_REST_API_KEY:3298abd84c29ad502e35b30dd1fbdbcb}
 
+# Redis 설정
+redis:
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD:}
+  database: ${REDIS_DATABASE:0}
+  timeout: 2000ms
+  lettuce:
+    pool:
+      max-active: 8
+      max-idle: 8
+      min-idle: 0
+
 server:
   port: 8080
 
