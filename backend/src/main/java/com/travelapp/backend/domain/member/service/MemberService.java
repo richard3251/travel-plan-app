@@ -25,6 +25,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public MemberResponse signUp(MemberSignUpRequest request) {
@@ -56,6 +57,9 @@ public class MemberService {
         String accessToken = jwtUtil.generateToken(member.getId(), member.getEmail());
         String refreshToken = jwtUtil.generateRefreshToken(member.getId());
 
+        // Refresh Token을 Redis에 저장
+        refreshTokenService.saveRefreshToken(refreshToken, member.getId());
+
         return MemberLoginResponse.of(member, accessToken, refreshToken);
     }
 
@@ -81,19 +85,51 @@ public class MemberService {
             throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
         }
 
-        // 토큰에서 사용자 ID 추출
-        Long memberId = jwtUtil.getMemberIdFromToken(refreshToken);
+        // Redis에서 Refresh Token 존재 여부 확인
+        if (!refreshTokenService.existsRefreshToken(refreshToken)) {
+            throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
+        }
+
+        // Redis에서 사용자 ID 추출
+        Long memberId = refreshTokenService.getMemberIdByToken(refreshToken);
+        if (memberId == null) {
+            throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
+        }
 
         // 사용자 존재 여부 확인
         Member member = memberRepository.findById(memberId).orElseThrow(
             MemberNotFoundException::new
         );
 
+        // 기존 Refresh Token 삭제
+        refreshTokenService.deleteRefreshToken(refreshToken);
+
         // 새로운 토큰 생성
         String newAccessToken = jwtUtil.generateToken(member.getId(), member.getEmail());
         String newRefreshToken = jwtUtil.generateRefreshToken(member.getId());
 
+        // 새로운 Refresh Token을 Redis에 저장
+        refreshTokenService.saveRefreshToken(newRefreshToken, member.getId());
+
         return TokenRefreshResponse.of(newAccessToken, newRefreshToken);
+    }
+
+    /**
+     * 로그아웃 - Refresh Token 무효화
+     */
+    @Transactional
+    public void logout(String refreshToken) {
+        if (refreshToken != null && refreshTokenService.existsRefreshToken(refreshToken)) {
+            refreshTokenService.deleteRefreshToken(refreshToken);
+        }
+    }
+
+    /**
+     * 모든 기기에서 로그아웃 - 사용자의 모든 Refresh Token 무효화
+     */
+    @Transactional
+    public void logoutFromAllDevices(Long memberId) {
+        refreshTokenService.deleteAllRefreshTokensByMemberId(memberId);
     }
 
 

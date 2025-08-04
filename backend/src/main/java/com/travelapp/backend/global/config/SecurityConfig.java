@@ -31,7 +31,8 @@ public class SecurityConfig {
                     "/api/members/login",
                     "/api/members/refresh",
                     "/api/members/logout",
-                    "/api/validation-test/**")
+                    "/api/validation-test/**",
+                    "/api/members/logout-all")
                 .permitAll()
                 .anyRequest().authenticated()
             )

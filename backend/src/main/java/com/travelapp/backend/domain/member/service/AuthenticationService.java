@@ -68,9 +68,18 @@ public class AuthenticationService {
     /**
      * 로그아웃 처리 및 쿠키 무효화
      */
-    public void logoutWithCookie(HttpServletResponse response) {
+    public void logoutWithCookie(HttpServletRequest request, HttpServletResponse response) {
+        // 쿠키에서 Refresh Token 추출
+        String refreshToken = CookieUtil.getRefreshTokenFromCookie(request);
+
+        // Redis에서 Refresh Token 삭제
+        if (StringUtils.hasText(refreshToken)) {
+            memberService.logout(refreshToken);
+        }
+
+        // 쿠키 무효화
         CookieUtil.clearAllTokenCookies(response);
-        log.info("사용자 로그아웃 완료 - 쿠키 무효화");
+        log.info("사용자 로그아웃 완료 - Redis 토큰 삭제 및 쿠키 무효화");
     }
 
     /**

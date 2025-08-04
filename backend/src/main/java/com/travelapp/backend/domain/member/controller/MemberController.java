@@ -5,6 +5,7 @@ import com.travelapp.backend.domain.member.dto.request.MemberSignUpRequest;
 import com.travelapp.backend.domain.member.dto.response.MemberResponse;
 import com.travelapp.backend.domain.member.service.AuthenticationService;
 import com.travelapp.backend.domain.member.service.MemberService;
+import com.travelapp.backend.global.util.CookieUtil;
 import com.travelapp.backend.global.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -65,10 +66,29 @@ public class MemberController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletResponse response) {
-        authenticationService.logoutWithCookie(response);
+    public ResponseEntity<String> logout(
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
+        authenticationService.logoutWithCookie(request, response);
 
         return ResponseEntity.ok("로그아웃이 완료되었습니다.");
+    }
+
+    @PostMapping("/logout-all")
+    public ResponseEntity<String> logoutFromAllDevices(
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+
+        // 모든 기기에서 로그아웃
+        memberService.logoutFromAllDevices(memberId);
+
+        //현재 기기 쿠키도 무효화
+        CookieUtil.clearAllTokenCookies(response);
+
+        return ResponseEntity.ok("모든 기기에서 로그아웃이 완료되었습니다.");
     }
 
 }
