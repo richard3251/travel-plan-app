@@ -31,9 +31,10 @@ public class SecurityConfig {
                     "/api/members/login",
                     "/api/members/refresh",
                     "/api/members/logout",
-                    "/api/validation-test/**",
-                    "/api/members/logout-all")
+                    "/api/validation-test/**")
                 .permitAll()
+                .requestMatchers("/api/members/logout-all")
+                .authenticated()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -3,7 +3,9 @@ package com.travelapp.backend.domain.member.service;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -13,7 +15,7 @@ public class RefreshTokenService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    private static final String REFRESH_TOKEN_PREFIX = "refresh_token";
+    private static final String REFRESH_TOKEN_PREFIX = "refresh_token:";
     private static final long REFRESH_TOKEN_EXPIRATION_DAYS = 7;
 
     /**
@@ -30,7 +32,8 @@ public class RefreshTokenService {
             TimeUnit.DAYS
         );
 
-        log.info("Refresh Token 저장 완료 - 사용자 ID: {}", memberId);
+        log.info("Refresh Token 저장 완료 - 사용자 ID: {}, 만료시간: {}일", memberId,
+            REFRESH_TOKEN_EXPIRATION_DAYS);
     }
 
     /**
@@ -57,8 +60,18 @@ public class RefreshTokenService {
      * Refresh Token 존재 여부 확인
      */
     public boolean existsRefreshToken(String token) {
-        String key = REFRESH_TOKEN_PREFIX + token;
-        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+        if (token == null || token.trim().isEmpty()) {
+            log.warn("빈 토큰으로 존재 여부 확인 시도");
+            return false;
+        }
+
+        try {
+            String key = REFRESH_TOKEN_PREFIX + token;
+            return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+        } catch (Exception e) {
+            log.error("Redis 연결 오류로 토큰 존재 확인 실패: {}", e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -77,21 +90,40 @@ public class RefreshTokenService {
 
     /**
      * 사용자의 모든 Refresh Token 삭제
+     * 성능 최적화: SCAN 명령어 사용으로 블로킹 방지
      */
     public void deleteAllRefreshTokensByMemberId(Long memberId) {
         String pattern = REFRESH_TOKEN_PREFIX + "*";
-        var keys = redisTemplate.keys(pattern);
+        int deletedCount = 0;
 
-        if (keys != null) {
-            for (String key : keys) {
+        // SCAN 옵션 설정: 패턴 매칭, 배치 크기 100
+        ScanOptions scanOptions = ScanOptions.scanOptions()
+            .match(pattern)
+            .count(100)
+            .build();
+
+        // SCAN을 사용하여 논블로킹 방식으로 키 순회
+        try (Cursor<String> cursor = redisTemplate.scan(scanOptions)) {
+            while (cursor.hasNext()) {
+                String key = cursor.next();
                 String storedMemberId = redisTemplate.opsForValue().get(key);
+
                 if (String.valueOf(memberId).equals(storedMemberId)) {
-                    redisTemplate.delete(key);
-                    log.info("사용자 {}의 Refresh Token 삭제: {}", memberId, key);
+                    Boolean deleted = redisTemplate.delete(key);
+                    if (Boolean.TRUE.equals(deleted)) {
+                        deletedCount++;
+                        log.debug("사용자 {}의 Refresh Token 삭제: {}", memberId, key);
+                    }
                 }
             }
+        } catch (Exception e) {
+            log.error("SCAN 명령어 실행 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("Refresh Token 삭제 중 오류 발생", e);
         }
+
+        log.info("사용자 {}의 Refresh Token {} 개 삭제 완료", memberId, deletedCount);
     }
+
 
     /**
      * Refresh Token의 남은 만료 시간 조회 (초 단위)
