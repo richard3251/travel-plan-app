@@ -45,13 +45,21 @@ public class TripDayService {
 
     @Transactional
     public void deleteTripDay(Long dayId) {
+        TripDay tripDay = findTripDayWithOwnerValidation(dayId);
+        tripDayRepository.delete(tripDay);
+    }
+
+    /**
+     * TripDay 존재 및 소유자 확인 (내부 공통 메서드)
+     */
+    private TripDay findTripDayWithOwnerValidation(Long dayId) {
         TripDay tripDay = tripDayRepository.findById(dayId).orElseThrow(
             () -> new TripDayNotFoundException(dayId)
         );
 
+        // TripDay 가 속한 Trip 의 소유자 검증
         tripService.findTripWithOwnerValidation(tripDay.getTrip().getId());
-
-        tripDayRepository.delete(tripDay);
+        return tripDay;
     }
 
 

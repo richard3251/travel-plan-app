@@ -66,9 +66,7 @@ public class TripPlaceService {
     @Transactional
     public TripPlaceResponse updateTripPlace(Long placeId, TripPlaceUpdateRequest request) {
 
-        TripPlace tripPlace = existsTripPlace(placeId);
-
-        tripService.findTripWithOwnerValidation(tripPlace.getTripDay().getTrip().getId());
+        TripPlace tripPlace = findTripPlaceWithOwnerValidation(placeId);
 
         tripPlace.update(request);
         tripPlaceRepository.save(tripPlace);
@@ -79,9 +77,7 @@ public class TripPlaceService {
     @Transactional
     public TripPlaceResponse updateVisitOrder(Long placeId, VisitOrderUpdateRequest request) {
 
-        TripPlace tripPlace = existsTripPlace(placeId);
-
-        tripService.findTripWithOwnerValidation(tripPlace.getTripDay().getTrip().getId());
+        TripPlace tripPlace = findTripPlaceWithOwnerValidation(placeId);
 
         Integer oldOrder = tripPlace.getVisitOrder();
         Integer newOrder = request.getVisitOrder();
@@ -128,19 +124,19 @@ public class TripPlaceService {
 
     @Transactional
     public void deleteTripPlace(Long placeId) {
-
-        TripPlace tripPlace = existsTripPlace(placeId);
-
-        tripService.findTripWithOwnerValidation(tripPlace.getTripDay().getTrip().getId());
-
+        TripPlace tripPlace = findTripPlaceWithOwnerValidation(placeId);
         tripPlaceRepository.delete(tripPlace);
     }
 
-    private TripPlace existsTripPlace(Long placeId) {
 
-        return tripPlaceRepository.findById(placeId).orElseThrow(
+    private TripPlace findTripPlaceWithOwnerValidation(Long placeId) {
+        TripPlace tripPlace = tripPlaceRepository.findById(placeId).orElseThrow(
             () -> new TripPlaceNotFoundException(placeId)
         );
+
+        // TripPlace 가 속한 Trip 의 소유자 검증
+        tripService.findTripWithOwnerValidation(tripPlace.getTripDay().getTrip().getId());
+        return tripPlace;
     }
 
 
