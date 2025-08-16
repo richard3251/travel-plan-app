@@ -31,7 +31,12 @@ public class SecurityConfig {
                     "/api/members/login",
                     "/api/members/refresh",
                     "/api/members/logout",
-                    "/api/validation-test/**")
+                    "/api/validation-test/**",
+                    "/v3/api-docs/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/swagger-resources/**",
+                    "/webjars/**")
                 .permitAll()
                 .requestMatchers("/api/members/logout-all")
                 .authenticated()
