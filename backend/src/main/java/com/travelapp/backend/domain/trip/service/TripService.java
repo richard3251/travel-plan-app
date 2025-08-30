@@ -53,7 +53,6 @@ public class TripService {
 
     @Transactional(readOnly = true)
     public TripResponse getTrip(Long tripId) {
-
         Trip trip = findTripWithOwnerValidation(tripId);
 
         return TripResponse.of(trip);

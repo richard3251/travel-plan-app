@@ -10,8 +10,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import lombok.Builder;
 import lombok.Getter;
 
+@Builder
 @Schema(description = "여행 계획 생성 요청 DTO")
 @Getter
 @ValidDateRange

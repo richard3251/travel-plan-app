@@ -7,10 +7,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @ValidDateRange
+@Builder
 public class TripModifyRequest {
 
     @NotBlank(message = "여행 제목은 필수입니다")
