@@ -169,7 +169,7 @@ public class TripServiceTest {
             try (MockedStatic<SecurityUtil> securityUtil = Mockito.mockStatic(SecurityUtil.class)) {
                 // given
                 securityUtil.when(SecurityUtil :: getCurrentMemberId).thenReturn(1L);
-                given(tripRepository.findByMember_Id(1L)).willReturn(List.of(testTrip));
+                given(tripRepository.findById(1L)).willReturn(Optional.of(testTrip));
 
                 // when
                 TripResponse result = tripService.getTrip(1L);
@@ -177,7 +177,7 @@ public class TripServiceTest {
                 // then
                 assertThat(result.getTitle()).isEqualTo("제주도 여행");
                 assertThat(result.getRegion()).isEqualTo("제주도");
-                verify(tripRepository).findByMember_Id(1L);
+                verify(tripRepository).findById(1L);
             }
         }
 
@@ -185,7 +185,7 @@ public class TripServiceTest {
         @DisplayName("실패 - 존재하지 않는 여행 조회 시 TripNotFoundException 예외 발생")
         void getTrip_Fail_TripNotFound() {
             // given
-            given(tripRepository.findByMember_Id(1L)).willReturn(List.of());
+            given(tripRepository.findById(1L)).willReturn(Optional.empty());
 
             // when & then
             assertThatThrownBy(() -> tripService.getTrip(1L))
@@ -307,48 +307,6 @@ public class TripServiceTest {
 
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

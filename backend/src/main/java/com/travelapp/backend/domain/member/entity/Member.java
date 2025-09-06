@@ -37,6 +37,4 @@ public class Member {
     @Column(nullable = false)
     private Role role;
 
-
-
 }
