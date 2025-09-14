@@ -32,32 +32,40 @@ configurations.all {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	// mysql
-	implementation 'com.mysql:mysql-connector-j:8.2.0'
-    // WebClient만 사용하므로 부트 스타터 대신 라이브러리 의존성만 추가
-    implementation 'org.springframework:spring-webflux'
-	// .env 파일 인식하기위한 라이브러리
-	implementation 'me.paulschwarz:spring-dotenv:3.0.0'
-	// spring-security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	// JWT
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
-	// Redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	// OpenAPI/Swagger UI
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
-
+	// 핵심 Spring Boot 스타터들
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'     // JPA, Hibernate (데이터베이스 ORM)
+	implementation 'org.springframework.boot:spring-boot-starter-validation'   // 입력값 검증 (@Valid, @NotBlank 등)
+	implementation 'org.springframework.boot:spring-boot-starter-web'          // REST API, MVC 컨트롤러
+	implementation 'org.springframework.boot:spring-boot-starter-security'     // 보안, 인증/인가
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'   // Redis 캐시, 세션 저장소
+	
+	// 데이터베이스 드라이버
+	runtimeOnly 'com.mysql:mysql-connector-j:8.2.0'                           // MySQL 연결 드라이버 (실행시에만 필요)
+	
+	// 외부 API 호출 (카카오 장소 검색)
+	implementation 'org.springframework:spring-webflux'                        // WebClient로 HTTP 요청
+	
+	// 환경 설정
+	implementation 'me.paulschwarz:spring-dotenv:3.0.0'                       // .env 파일 읽기 (환경변수 관리)
+	
+	// JWT 토큰 인증
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'                          // JWT API 인터페이스
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'                            // JWT 구현체 (실행시에만 필요)
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'                         // JWT JSON 변환 (실행시에만 필요)
+	
+	// API 문서화 (Swagger UI)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'  // REST API 문서 자동 생성
+	
+	// 개발 도구들
+	compileOnly 'org.projectlombok:lombok'                                    // 코드 자동 생성 (@Getter, @Builder 등)
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'           // 개발시 자동 재시작
+	annotationProcessor 'org.projectlombok:lombok'                            // 롬복 어노테이션 처리
+	
+	// 테스트 의존성들
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'    // 기본 테스트 도구들 (@Test, MockMvc 등)
+	testImplementation 'org.springframework.security:spring-security-test'   // 보안 관련 테스트 도구
+	testImplementation 'com.h2database:h2'                                   // 테스트용 인메모리 데이터베이스
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'             // JUnit 테스트 실행기
 }
 
 tasks.named('test') {

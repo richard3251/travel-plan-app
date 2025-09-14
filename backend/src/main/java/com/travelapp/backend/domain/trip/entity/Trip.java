@@ -72,4 +72,19 @@ public class Trip {
         this.regionLng = request.getRegionLng();
     }
 
+    // 간단한 수정 메서드들
+    public void updateTile(String title) {
+        this.title = title;
+    }
+
+    public void updateDates(LocalDate startDate, LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public void updateTitleAndStartDate(String title, LocalDate startDate) {
+        this.title = title;
+        this.startDate = startDate;
+    }
+
 }
