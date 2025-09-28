@@ -40,6 +40,12 @@ public enum ErrorCode {
     KAKAO_API_ERROR(6000, "카카오 API 호출 중 오류가 발생했습니다.", 500),
     EXTERNAL_API_TIMEOUT(6001, "외부 API 호출 시간이 초과되었습니다.", 408),
 
+    // TripShare Errors (6500번대)
+    TRIP_SHARE_NOT_FOUND(6500, "공유된 여행을 찾을 수 없습니다.", 404),
+    TRIP_SHARE_ACCESS_DENIED(6501, "공유된 여행에 접근할 권한이 없습니다.", 403),
+    TRIP_SHARE_EXPIRED(6502, "공유 링크가 만료되었습니다.", 410),
+    TRIP_SHARE_ALREADY_EXISTS(6503, "이미 공유된 여행입니다.", 409),
+
     // Authentication Errors (7000번대)
     UNAUTHORIZED(7000, "인증이 필요합니다.", 401),
     INVALID_TOKEN(7001, "유효하지 않은 토큰입니다.", 401),
@@ -50,11 +56,7 @@ public enum ErrorCode {
     INVALID_REQUEST_BODY(8001, "요청 본문이 올바르지 않습니다.", 400),
     CONSTRAINT_VIOLATION(8002, "데이터 제약 조건을 위반했습니다.", 400);
 
-
     private final int code;
     private final String message;
     private final int status;
-
-
-
 }
