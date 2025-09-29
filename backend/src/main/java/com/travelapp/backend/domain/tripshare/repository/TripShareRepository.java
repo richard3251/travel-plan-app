@@ -32,26 +32,26 @@ public interface TripShareRepository extends JpaRepository<TripShare, Long> {
     /**
      * 공개된 TripShare 정보들을 조회순으로 조회 (페이징)
      */
-    @Query("SELECT ts"
-        + "FROM TripShare ts"
-        + "WHERE ts.isPublic = true AND (ts.expiryDate IS NULL OR ts.expiryDate > CURRENT_TIMESTAMP)"
+    @Query("SELECT ts "
+        + "FROM TripShare ts "
+        + "WHERE ts.isPublic = true AND (ts.expiryDate IS NULL OR ts.expiryDate > CURRENT_TIMESTAMP) "
         + "ORDER BY ts.viewCount DESC")
     Page<TripShare> findPublicTripShareByViewCount(Pageable pageable);
 
     /**
      *  공개된 TripShare 정보들을 최신순으로 조회 (페이징)
      */
-    @Query("SELECT ts"
-        + "FROM TripShare ts"
-        + "WHERE ts.isPublic = true AND (ts.expiryDate IS NULL OR ts.expiryDate > CURRENT_TIMESTAMP)"
+    @Query("SELECT ts "
+        + "FROM TripShare ts "
+        + "WHERE ts.isPublic = true AND (ts.expiryDate IS NULL OR ts.expiryDate > CURRENT_TIMESTAMP) "
         + "ORDER BY ts.createdAt DESC")
     Page<TripShare> findPublicTripShareByCreatedAt(Pageable pageable);
 
     /**
      *  만료되지 않은 공유 토큰인지 확인
      */
-    @Query("SELECT COUNT(ts) > 0"
-        + "FROM TripShare ts"
+    @Query("SELECT COUNT(ts) > 0 "
+        + "FROM TripShare ts "
         + "WHERE ts.shareToken = :shareToken AND ts.isPublic = true AND (ts.expiryDate IS NULL OR ts.expiryDate > CURRENT_TIMESTAMP)")
     boolean findPublicTripShareByShareToken(@Param("shareToken") String shareToken);
 

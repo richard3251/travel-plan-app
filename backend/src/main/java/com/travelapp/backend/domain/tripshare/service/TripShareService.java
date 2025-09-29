@@ -92,11 +92,11 @@ public class TripShareService {
     }
 
     /**
-     * 특정 회원 여행들의 공유 정보들을 조회
+     * 내 여행들의 공유 정보들을 조회
      */
     @Transactional(readOnly = true)
     public List<TripShareResponse> getMySharedTrips(Long memberId) {
-        log.info("특정 회원 여행들의 공유 정보들을 조회 - 회원 ID: {}", memberId);
+        log.info("내 여행들의 공유 정보들을 조회 - 회원 ID: {}", memberId);
 
         List<TripShare> tripShares = tripShareRepository.findByTripOwnerId(memberId);
 
