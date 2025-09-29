@@ -41,6 +41,4 @@ public class DateRangeValidator implements ConstraintValidator<ValidDateRange, O
         return !endDate.isBefore(startDate);
     }
 
-
-
 }
