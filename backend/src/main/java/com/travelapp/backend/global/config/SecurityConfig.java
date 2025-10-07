@@ -32,6 +32,7 @@ public class SecurityConfig {
                     "/api/members/refresh",
                     "/api/members/logout",
                     "/api/validation-test/**",
+                    "/api/files/trips/*/cover", // 여행 커버 이미지 공개 조회
                     "/v3/api-docs/**",
                     "/swagger-ui.html",
                     "/swagger-ui/**",

@@ -54,7 +54,16 @@ public enum ErrorCode {
     // Validation Errors (8000번대)
     MISSING_REQUEST_PARAMETER(8000, "필수 요청 파라미터가 누락되었습니다.", 400),
     INVALID_REQUEST_BODY(8001, "요청 본문이 올바르지 않습니다.", 400),
-    CONSTRAINT_VIOLATION(8002, "데이터 제약 조건을 위반했습니다.", 400);
+    CONSTRAINT_VIOLATION(8002, "데이터 제약 조건을 위반했습니다.", 400),
+
+    // File Upload Errors (9000번대)
+    FILE_NOT_FOUND(9000, "파일을 찾을 수 없습니다.", 404),
+    INVALID_FILE_TYPE(9001, "지원하지 않는 파일 형식입니다.", 400),
+    FILE_SIZE_EXCEEDED(9002, "파일 크기가 허용된 범위를 초과했습니다.", 400),
+    FILE_UPLOAD_FAILED(9003, "파일 업로드에 실패했습니다.", 500),
+    THUMBNAIL_CREATION_FAILED(9004, "썸네일 생성에 실패했습니다.", 500),
+    PRESIGNED_URL_GENERATION_FAILED(9005, "Pre-signed URL 생성에 실패했습니다.", 500),
+    S3_UPLOAD_FAILED(9006, "S3 업로드에 실패했습니다.", 500);
 
     private final int code;
     private final String message;

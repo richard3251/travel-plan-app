@@ -41,7 +41,7 @@ public class PresignedUrlResponse {
         @Schema(description = "Content-Type 헤더", example = "image/jpeg")
         private String contentType;
 
-        @Schema(description = "Content-Type 헤더", example = "2048576")
+        @Schema(description = "Content-Length 헤더", example = "2048576")
         private Long contentLength;
     }
 

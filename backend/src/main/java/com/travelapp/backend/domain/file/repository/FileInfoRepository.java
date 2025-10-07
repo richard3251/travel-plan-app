@@ -56,7 +56,7 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, Long> {
      * 특정 기간 이전에 삭제된 파일들 조회 (정리용)
      */
     @Query("SELECT f FROM FileInfo f WHERE f.isDeleted = true AND f.deletedAt < :beforeDate")
-    List<FileInfo> findPendingFilesBefore(@Param("beforeDate") LocalDateTime beforeDate);
+    List<FileInfo> findDeletedFilesBefore(@Param("beforeDate") LocalDateTime beforeDate);
 
     /**
      * 사용자별 총 파일 크기 계산 (완료된 파일만)

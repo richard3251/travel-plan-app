@@ -83,6 +83,11 @@ public class FileInfo {
         this.uploadStatus = UploadStatus.FAILED;
     }
 
+    public void markAsDeleted() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+    }
+
     public void updateThumbnailInfo(String thumbnailS3Key, String thumbnailUrl) {
         this.thumbnailS3Key = thumbnailS3Key;
         this.thumbnailUrl = thumbnailUrl;

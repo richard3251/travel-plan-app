@@ -4,6 +4,7 @@ import com.travelapp.backend.domain.file.dto.request.PresignedUrlRequest;
 import com.travelapp.backend.domain.file.dto.response.PresignedUrlResponse;
 import com.travelapp.backend.domain.file.entity.FileInfo;
 import com.travelapp.backend.domain.file.entity.FileType;
+import com.travelapp.backend.domain.file.repository.FileInfoRepository;
 import com.travelapp.backend.global.exception.BusinessException;
 import com.travelapp.backend.global.exception.dto.ErrorCode;
 import java.time.Duration;
@@ -28,6 +29,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class S3PresignedUrlService {
 
     private final S3Client s3Client;
+    private final FileInfoRepository fileInfoRepository;
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
@@ -53,8 +55,9 @@ public class S3PresignedUrlService {
         // S3 키 생성
         String s3key = generateS3Key(request.getFileName());
 
-        // FileInfo 메타데이터 생성 (PENDING 상태)
+        // FileInfo 메타데이터 생성 및 저장 (PENDING 상태)
         FileInfo fileInfo = createPendingFileInfo(request, s3key, uploadedBy);
+        FileInfo savedFileInfo = fileInfoRepository.save(fileInfo);
 
         // Pre-signed URL 생성
         String presignedUrl = createPresignedUrl(s3key, request.getContentType());
@@ -62,10 +65,10 @@ public class S3PresignedUrlService {
         // 만료 시간 계산
         LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(presignedUrlExpiration);
 
-        log.info("Pre-signed URL 생성 완료 - 파일 ID: {}, S3 키 : {}", fileInfo.getId(), s3key);
+        log.info("Pre-signed URL 생성 완료 - 파일 ID: {}, S3 키 : {}", savedFileInfo.getId(), s3key);
 
         return PresignedUrlResponse.builder()
-            .fileId(fileInfo.getId())
+            .fileId(savedFileInfo.getId())
             .presignedUrl(presignedUrl)
             .s3Key(s3key)
             .headers(PresignedUrlResponse.UploadHeaders.builder()
@@ -167,7 +170,7 @@ public class S3PresignedUrlService {
         }
 
         // 안전한 문자만 유지 (알파벳, 숫자, 하이픈, 언더스코어, 한글)
-        return nameWithoutExtension.replaceAll("[^a-zA-Z0-9\\\\-_가-힣]", "_")
+        return nameWithoutExtension.replaceAll("[^a-zA-Z0-9\\-_가-힣]", "_")
             .substring(0, Math.min(nameWithoutExtension.length(), 50)); // 길이 제한
     }
 
@@ -222,6 +225,34 @@ public class S3PresignedUrlService {
         }
     }
 
+    /**
+     * S3에서 파일 존재 여부 확인
+     */
+    public boolean existsInS3(String s3Key) {
+        try {
+            s3Client.headObject(builder -> builder
+                .bucket(bucketName)
+                .key(s3Key));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
+    /**
+     * S3에서 파일 삭제
+     */
+    public void deleteFileFromS3(String s3Key) {
+        try {
+            s3Client.deleteObject(builder -> builder
+                .bucket(bucketName)
+                .key(s3Key));
+
+            log.info("S3 파일 삭제 완료 - {}", s3Key);
+        } catch (Exception e) {
+            log.error("S3 파일 삭제 실패 - {}", s3Key, e);
+            // 삭제 실패해도 예외를 던지지 않음 (로그만 기록)
+        }
+    }
 
 }
