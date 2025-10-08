@@ -1,0 +1,180 @@
+/* 파일 업로드 컴포넌트 스타일 */
+.file-upload {
+  width: 100%;
+}
+
+.file-upload-area {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f9fafb;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-upload-area:hover:not(.disabled):not(.uploading) {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.file-upload-area.drag-over {
+  border-color: #3b82f6;
+  background-color: #dbeafe;
+  transform: scale(1.02);
+}
+
+.file-upload-area.uploading {
+  border-color: #10b981;
+  background-color: #ecfdf5;
+  cursor: not-allowed;
+}
+
+.file-upload-area.disabled {
+  border-color: #e5e7eb;
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 업로드 콘텐츠 */
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  opacity: 0.6;
+}
+
+.upload-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.primary-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.secondary-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* 업로드 진행률 */
+.upload-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #10b981);
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #10b981;
+}
+
+.cancel-button {
+  padding: 0.5rem 1rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #dc2626;
+}
+
+/* 에러 메시지 */
+.upload-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #dc2626;
+}
+
+.error-icon {
+  font-size: 1.1rem;
+}
+
+.error-message {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.error-close {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.error-close:hover {
+  background-color: #fecaca;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 640px) {
+  .file-upload-area {
+    padding: 1.5rem;
+    min-height: 100px;
+  }
+  
+  .upload-icon {
+    font-size: 2.5rem;
+  }
+  
+  .primary-text {
+    font-size: 1rem;
+  }
+  
+  .secondary-text {
+    font-size: 0.8rem;
+  }
+}

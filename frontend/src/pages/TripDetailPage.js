@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { tripApi, tripDayApi, tripPlaceApi } from '../api/api';
 import TripDayItem from '../components/TripDayItem';
 import MapSearchModal from '../components/MapSearchModal';
+import TripImageUpload from '../components/TripImageUpload';
+import TripShareModal from '../components/TripShareModal';
 import './TripDetailPage.css';
 
 // 실제 앱에서는 아래 주석을 해제하고 react-kakao-maps-sdk를 사용해야 합니다.
@@ -45,6 +47,9 @@ const TripDetailPage = () => {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showMapSearch, setShowMapSearch] = useState(false);
   const [showRegionInfo, setShowRegionInfo] = useState(true);
+  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [tripImages, setTripImages] = useState([]);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // 초기 데이터 로딩
   useEffect(() => {
@@ -311,6 +316,11 @@ const TripDetailPage = () => {
     setSelectedPlace(placeId);
   };
 
+  // 이미지 변경 핸들러
+  const handleImagesChange = (images) => {
+    setTripImages(images);
+  };
+
   if (loading) return <div className="loading">로딩 중...</div>;
   if (error) return <div className="error">{error}</div>;
   if (!trip) return <div className="error">여행 정보를 찾을 수 없습니다.</div>;
@@ -331,6 +341,18 @@ const TripDetailPage = () => {
           <span className="brand-name">planscanner</span>
         </div>
         <div className="trip-actions">
+          <button 
+            onClick={() => setShowShareModal(true)} 
+            className="share-button"
+          >
+            🔗 공유
+          </button>
+          <button 
+            onClick={() => setShowImageUpload(!showImageUpload)} 
+            className="image-button"
+          >
+            {showImageUpload ? '이미지 숨기기' : '이미지 관리'}
+          </button>
           <Link to={`/trips/edit/${tripId}`} className="edit-button">
             수정
           </Link>
@@ -339,6 +361,16 @@ const TripDetailPage = () => {
           </button>
         </div>
       </div>
+
+      {/* 이미지 업로드 섹션 */}
+      {showImageUpload && (
+        <div className="trip-image-section">
+          <TripImageUpload 
+            tripId={tripId} 
+            onImagesChange={handleImagesChange}
+          />
+        </div>
+      )}
 
       {/* 메인 컨텐츠 */}
       <div className="trip-content">
@@ -491,6 +523,15 @@ const TripDetailPage = () => {
           목록으로 돌아가기
         </button>
       </div>
+
+      {/* 여행 공유 모달 */}
+      {showShareModal && (
+        <TripShareModal
+          tripId={tripId}
+          tripTitle={trip.title}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 };

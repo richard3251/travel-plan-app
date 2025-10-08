@@ -8,6 +8,8 @@ import TripList from './components/TripList';
 import NewTripPage from './pages/NewTripPage';
 import TripDetailPage from './pages/TripDetailPage';
 import EditTripPage from './pages/EditTripPage';
+import FileUploadDemo from './pages/FileUploadDemo';
+import SharedTripPage from './pages/SharedTripPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import './App.css';
@@ -87,6 +89,20 @@ function AppContent() {
                 <EditTripPage />
               </ProtectedRoute>
             } 
+          />
+          <Route 
+            path="/demo/file-upload" 
+            element={
+              <ProtectedRoute>
+                <FileUploadDemo />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* 공유된 여행 보기 (인증 불필요) */}
+          <Route 
+            path="/shared/:shareToken" 
+            element={<SharedTripPage />} 
           />
           
           {/* 404 페이지나 기본 리디렉트 */}

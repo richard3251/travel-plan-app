@@ -19,30 +19,22 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 로컬 스토리지에서 토큰 관리
-  const getStoredToken = () => localStorage.getItem('accessToken');
-  const setStoredToken = (token) => {
-    if (token) {
-      localStorage.setItem('accessToken', token);
-    } else {
-      localStorage.removeItem('accessToken');
-    }
-  };
+  // 쿠키 기반 인증을 사용하므로 localStorage 토큰 관리는 불필요
+  // 하지만 기존 코드와의 호환성을 위해 빈 함수로 유지
+  const getStoredToken = () => null;
+  const setStoredToken = () => {};
 
-  // API 클라이언트 생성 (인증 헤더 포함)
-  const createApiClient = (token = null) => {
+  // API 클라이언트 생성 (쿠키 기반 인증)
+  const createApiClient = () => {
     const client = axios.create({
       baseURL: API_BASE_URL,
       headers: {
         'Content-Type': 'application/json',
       },
-      withCredentials: true, // 쿠키 포함
+      withCredentials: true, // 쿠키 포함 - 백엔드에서 쿠키의 JWT 토큰을 읽음
     });
 
-    // 토큰이 있으면 Authorization 헤더 추가
-    if (token) {
-      client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    }
+    // 쿠키 기반 인증을 사용하므로 Authorization 헤더는 불필요
 
     // 응답 인터셉터 - 401 에러 시 로그아웃 처리
     client.interceptors.response.use(
@@ -52,13 +44,9 @@ export const AuthProvider = ({ children }) => {
           // 토큰 만료 시 리프레시 시도
           try {
             await refreshToken();
-            // 원래 요청 재시도
+            // 원래 요청 재시도 (쿠키 기반이므로 헤더 수정 불필요)
             const originalRequest = error.config;
-            const newToken = getStoredToken();
-            if (newToken) {
-              originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
-              return client.request(originalRequest);
-            }
+            return client.request(originalRequest);
           } catch (refreshError) {
             // 리프레시 실패 시 로그아웃
             logout();
@@ -74,20 +62,13 @@ export const AuthProvider = ({ children }) => {
   // 현재 사용자 정보 가져오기
   const getCurrentUser = useCallback(async () => {
     try {
-      const token = getStoredToken();
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      const client = createApiClient(token);
+      const client = createApiClient();
       const response = await client.get('/members/me');
       setUser(response.data);
       setError(null);
     } catch (err) {
       console.error('사용자 정보 가져오기 실패:', err);
-      // 토큰이 유효하지 않으면 제거
-      setStoredToken(null);
+      // 쿠키의 토큰이 유효하지 않으면 사용자 정보 초기화
       setUser(null);
     } finally {
       setLoading(false);
@@ -106,9 +87,7 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
-      // 백엔드에서 쿠키로 토큰을 설정하지만, 응답에서도 토큰을 받을 수 있도록 준비
-      // 현재 백엔드 구현에서는 쿠키 방식을 사용하므로 별도 토큰 저장은 불필요할 수 있음
-      
+      // 백엔드에서 쿠키로 JWT 토큰을 설정함
       // 사용자 정보 설정
       setUser(response.data);
       
@@ -173,9 +152,8 @@ export const AuthProvider = ({ children }) => {
       console.error('로그아웃 요청 실패:', err);
       // 에러가 발생해도 로컬 상태는 정리
     } finally {
-      // 로컬 상태 정리
+      // 로컬 상태 정리 (쿠키는 백엔드에서 삭제됨)
       setUser(null);
-      setStoredToken(null);
       setError(null);
     }
   };
@@ -188,9 +166,8 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('전체 로그아웃 실패:', err);
     } finally {
-      // 로컬 상태 정리
+      // 로컬 상태 정리 (쿠키는 백엔드에서 삭제됨)
       setUser(null);
-      setStoredToken(null);
       setError(null);
     }
   };

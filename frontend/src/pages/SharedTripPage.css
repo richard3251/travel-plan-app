@@ -1,0 +1,286 @@
+/* 공유된 여행 페이지 스타일 */
+.shared-trip-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f9fafb;
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: #6b7280;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.error-message h2 {
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
+/* 헤더 */
+.shared-trip-header {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-content h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.trip-period {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.share-info {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* 메인 컨텐츠 */
+.shared-trip-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* 사이드바 */
+.shared-trip-sidebar {
+  width: 350px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.shared-trip-sidebar h3 {
+  padding: 1.5rem;
+  margin: 0;
+  font-size: 1.3rem;
+  border-bottom: 1px solid #e5e7eb;
+  color: #1f2937;
+}
+
+.shared-trip-sidebar h4 {
+  padding: 1rem 1.5rem 0.5rem 1.5rem;
+  margin: 0;
+  font-size: 1.1rem;
+  color: #4b5563;
+}
+
+/* 날짜 탭 */
+.day-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.day-tab {
+  padding: 1rem;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.day-tab:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.day-tab.active {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+
+.day-number {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 1.1rem;
+}
+
+.day-date {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.places-count {
+  color: #3b82f6;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* 장소 목록 */
+.places-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.no-places {
+  text-align: center;
+  padding: 2rem;
+  color: #9ca3af;
+}
+
+.places {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+}
+
+.place-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.place-item:hover {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.place-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border-radius: 50%;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.place-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.place-name {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.place-address {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.place-time {
+  color: #059669;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.place-memo {
+  color: #4b5563;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  background: white;
+  border-left: 3px solid #3b82f6;
+  border-radius: 4px;
+}
+
+/* 지도 */
+.shared-trip-map {
+  flex: 1;
+  position: relative;
+}
+
+.place-marker-label {
+  background: white;
+  border: 2px solid #3b82f6;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #3b82f6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.place-marker-number {
+  font-size: 0.85rem;
+}
+
+/* 푸터 */
+.shared-trip-footer {
+  padding: 1.5rem;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.home-button {
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.home-button:hover {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .shared-trip-content {
+    flex-direction: column;
+  }
+
+  .shared-trip-sidebar {
+    width: 100%;
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .shared-trip-map {
+    height: 60vh;
+  }
+}

@@ -31,6 +31,7 @@ const Header = () => {
       {isAuthenticated && (
         <div className="nav-links">
           <Link to="/">내 여행 목록</Link>
+          <Link to="/demo/file-upload">파일 업로드 데모</Link>
         </div>
       )}
       

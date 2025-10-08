@@ -39,6 +39,8 @@ const api = axios.create({
 api.interceptors.request.use(
   config => {
     console.log('API 요청:', config.method.toUpperCase(), config.url, config.data);
+    console.log('withCredentials:', config.withCredentials);
+    console.log('쿠키 전송 설정:', document.cookie);
     return config;
   },
   error => {
@@ -51,6 +53,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   response => {
     console.log('API 응답:', response.status, response.data);
+    console.log('응답 헤더:', response.headers);
+    console.log('Set-Cookie 헤더:', response.headers['set-cookie']);
+    console.log('현재 쿠키:', document.cookie);
     return response;
   },
   error => {
@@ -166,6 +171,121 @@ const placeApi = {
   }
 };
 
+// 파일 업로드 관련 API (인증 필요)
+const fileApi = {
+  // Pre-signed URL 발급 (일반 파일)
+  getPresignedUrl: (fileName, fileSize, contentType) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.post('/files/presigned-url', {
+      fileName,
+      fileSize,
+      contentType
+    });
+  },
+
+  // Pre-signed URL 발급 (여행 이미지)
+  getTripImagePresignedUrl: (fileName, fileSize, contentType, tripId, isCoverImage = false, caption = null, displayOrder = null) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.post('/files/trips/presigned-url', {
+      fileName,
+      fileSize,
+      contentType,
+      tripId,
+      isCoverImage,
+      caption,
+      displayOrder
+    });
+  },
+
+  // S3에 파일 직접 업로드
+  uploadToS3: (presignedUrl, file, contentType, onProgress = null) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      // 진행률 추적
+      if (onProgress) {
+        xhr.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable) {
+            const percentComplete = Math.round((event.loaded * 100) / event.total);
+            onProgress(percentComplete);
+          }
+        });
+      }
+
+      // 업로드 완료 처리
+      xhr.addEventListener('load', () => {
+        if (xhr.status === 200) {
+          resolve({ success: true });
+        } else {
+          resolve({ 
+            success: false, 
+            error: `HTTP ${xhr.status}: ${xhr.statusText}` 
+          });
+        }
+      });
+
+      // 에러 처리
+      xhr.addEventListener('error', () => {
+        resolve({ 
+          success: false, 
+          error: 'Network error occurred' 
+        });
+      });
+
+      // 요청 시작
+      xhr.open('PUT', presignedUrl);
+      xhr.setRequestHeader('Content-Type', contentType);
+      xhr.send(file);
+    });
+  },
+
+  // 업로드 완료 통지
+  notifyUploadComplete: (fileId, success, errorMessage = null) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.post('/files/upload-complete', {
+      fileId,
+      success,
+      errorMessage
+    });
+  },
+
+  // 내 파일 목록 조회
+  getMyFiles: (page = 0, size = 20) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.get(`/files/my?page=${page}&size=${size}`);
+  },
+
+  // 여행 이미지 목록 조회
+  getTripImages: (tripId) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.get(`/files/trips/${tripId}`);
+  },
+
+  // 여행 커버 이미지 조회
+  getTripCoverImage: (tripId) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.get(`/files/trips/${tripId}/cover`);
+  },
+
+  // 파일 삭제
+  deleteFile: (fileId) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.delete(`/files/${fileId}`);
+  },
+
+  // 여행 이미지 삭제
+  deleteTripImage: (imageId) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.delete(`/files/trips/images/${imageId}`);
+  },
+
+  // 여행 이미지 순서 변경
+  updateTripImageOrder: (imageId, newOrder) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.put(`/files/trips/images/${imageId}/order?newOrder=${newOrder}`);
+  }
+};
+
 // 인증 관련 API (인증 불필요)
 const authApi = {
   // 로그인
@@ -200,4 +320,41 @@ const authApi = {
   }
 };
 
-export { tripApi, tripDayApi, tripPlaceApi, placeApi, authApi };
+// 여행 공유 관련 API (일부 인증 필요)
+const tripShareApi = {
+  // 여행 공유 링크 생성
+  createTripShare: (tripId, shareData) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.post(`/trip-shares/trips/${tripId}`, shareData);
+  },
+
+  // 공유 토큰으로 여행 조회 (인증 불필요)
+  getSharedTrip: (shareToken) => {
+    return api.get(`/trip-shares/shared/${shareToken}`);
+  },
+
+  // 내가 공유한 여행 목록 조회
+  getMySharedTrips: () => {
+    const authApi = createAuthenticatedApi();
+    return authApi.get('/trip-shares/my-shares');
+  },
+
+  // 공개 공유 여행 목록 조회 (페이징, 인증 불필요)
+  getPublicSharedTrips: (page = 0, size = 20, sortBy = 'latest') => {
+    return api.get(`/trip-shares/public?page=${page}&size=${size}&sortBy=${sortBy}`);
+  },
+
+  // 여행 공유 설정 수정
+  updateTripShare: (tripId, shareData) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.put(`/trip-shares/trips/${tripId}`, shareData);
+  },
+
+  // 여행 공유 삭제
+  deleteTripShare: (tripId) => {
+    const authApi = createAuthenticatedApi();
+    return authApi.delete(`/trip-shares/trips/${tripId}`);
+  }
+};
+
+export { tripApi, tripDayApi, tripPlaceApi, placeApi, fileApi, tripShareApi, authApi };

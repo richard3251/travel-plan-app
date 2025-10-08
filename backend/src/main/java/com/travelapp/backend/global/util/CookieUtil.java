@@ -32,9 +32,10 @@ public class CookieUtil {
         cookie.setSecure(isSecure);         // HTTPS에서만 전송 (개발환경에서는 false)
         cookie.setPath("/");                // 모든 경로에서 접근 가능
         cookie.setMaxAge(maxAge);           // 만료 시간 설정
-        // cookie.setSameSite("Strict");    // CSRF 방지(Spring Boot 2.6+에서 지원)
+        // 개발 환경에서는 SameSite=Lax로 설정 (CSRF 방지하면서 일반적인 요청 허용)
+        cookie.setAttribute("SameSite", "Lax");
 
-        log.debug("쿠키 생성: name={}, maxAge = {}, secure = {}", name, maxAge, isSecure);
+        log.debug("쿠키 생성: name={}, maxAge = {}, secure = {}, SameSite=Lax", name, maxAge, isSecure);
         return cookie;
     }
 
@@ -61,6 +62,7 @@ public class CookieUtil {
         cookie.setSecure(false); // 개발환경 고려
         cookie.setPath("/");
         cookie.setMaxAge(0); // 즉시 만료
+        cookie.setAttribute("SameSite", "Lax");
 
         log.debug("쿠키 무효화: name={}", name);
         return cookie;
