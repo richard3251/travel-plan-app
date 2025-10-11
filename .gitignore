@@ -15,6 +15,11 @@ backend/.gradle/
 # ===== 민감 설정 =====
 backend/src/main/resources/application.yml
 .env
+backend/.env
+frontend/.env
+*.env
+!.env.example
+!ENV_EXAMPLE*.txt
 
 # ===== 기타 =====
 logs/

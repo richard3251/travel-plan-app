@@ -15,12 +15,24 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 허용할 출처 (프론트엔드 URL)
-        configuration.setAllowedOriginPatterns(Arrays.asList(
-            "http://localhost:3000",    // React 개발 서버
-            "http://127.0.0.1:3000",    // 로컬호스트 대체
-            "http://localhost:*",       // 다른 포트도 허용
-            "http://127.0.0.1:*"        // 다른 포트도 허용
-        ));
+//        configuration.setAllowedOriginPatterns(Arrays.asList(
+//            "http://localhost:3000",    // React 개발 서버
+//            "http://127.0.0.1:3000",    // 로컬호스트 대체
+//            "http://localhost:*",       // 다른 포트도 허용
+//            "http://127.0.0.1:*"        // 다른 포트도 허용
+//        ));
+
+        // 환경변수로 프로덕션 URL 추가 가능: ALLOWED_ORIGINS=https://yourdomain.com,http://localhost:3000
+        String allowedOriginsEnv = System.getenv("ALLOWED_ORIGINS");
+        if (allowedOriginsEnv != null && !allowedOriginsEnv.isEmpty()) {
+            configuration.setAllowedOrigins(Arrays.asList(allowedOriginsEnv.split(",")));
+        } else {
+            // 개발 환경 기본값
+            configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:3000",
+                "http://127.0.0.1:3000"
+            ));
+        }
 
         // 허용할 HTTP 메서드
         configuration.setAllowedMethods(Arrays.asList(
