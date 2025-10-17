@@ -1,8 +1,10 @@
 package com.travelapp.backend.domain.trip.entity;
 
+import com.travelapp.backend.domain.file.entity.TripImage;
 import com.travelapp.backend.domain.member.entity.Member;
 import com.travelapp.backend.domain.trip.dto.request.TripModifyRequest;
 import com.travelapp.backend.domain.tripday.entity.TripDay;
+import com.travelapp.backend.domain.tripshare.entity.TripShare;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,6 +46,17 @@ public class Trip {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "trip",
+        cascade = CascadeType.ALL,  //    PERSIST, MERGE, REMOVE 포함
+        orphanRemoval = true
+    )
+    private List<TripImage> images = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripShare> shares = new ArrayList<>();
 
     @Column(nullable = false)
     private String title;
