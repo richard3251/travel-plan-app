@@ -38,6 +38,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'          // REST API, MVC 컨트롤러
 	implementation 'org.springframework.boot:spring-boot-starter-security'     // 보안, 인증/인가
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'   // Redis 캐시, 세션 저장소
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'    // WebSocket 실시간 통신 (채팅 기능)
 	
 	// 데이터베이스 드라이버
 	runtimeOnly 'com.mysql:mysql-connector-j:8.2.0'                           // MySQL 연결 드라이버 (실행시에만 필요)
